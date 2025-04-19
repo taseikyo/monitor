@@ -1,0 +1,36 @@
+repos:
+  # 自动格式化代码：black
+  - repo: https://github.com/psf/black
+    rev: 23.3.0  # 请根据需要选择稳定版本
+    hooks:
+      - id: black
+        language_version: python3  # 根据你的项目设置，比如 python3.10
+
+  # 自动整理 import 顺序：isort
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+
+  # Python 静态代码检查器（可选但推荐）
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.1.0
+    hooks:
+      - id: flake8
+        args: ["--max-line-length=88"]
+
+  # 修复多余的文件末尾换行符
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: end-of-file-fixer
+      - id: trailing-whitespace  # 清除多余的行末空格
+      - id: check-yaml           # 检查 YAML 文件格式
+      - id: check-json           # 检查 JSON 格式是否合法
+
+  # 检查是否有未使用的 import（可选）
+  - repo: https://github.com/PyCQA/autoflake
+    rev: v2.2.0
+    hooks:
+      - id: autoflake
+        args: ["--remove-all-unused-imports", "--remove-unused-variables", "--ignore-init-module-imports"]

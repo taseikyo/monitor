@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
-# @Author: Lewis Tian
-# @Date:   2025-04-19 18:15:47
+# @Author:  Lewis Tian
+# @Date:    2025-04-19 18:15:47
 # @Version: 3.13
+# @Desc:    监控小米13电池服务价格变化
 
 import csv
 import json
@@ -56,7 +57,7 @@ def battery_info() -> Dict[str, str]:
     }
 
     url = "https://api2.order.mi.com/product/view"
-    payload = {"version": "2", "product_id": "13396", "t": int(time.time())}
+    payload = {"version": "2", "product_id": "13396", "t": str(int(time.time()))}
 
     try:
         response = session.get(url, params=payload, headers=headers, timeout=10)

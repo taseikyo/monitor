@@ -10,14 +10,8 @@ format_py() {
     echo "📂 目标目录：$target_dir"
     echo "🔍 正在查找 Python 文件..."
 
-    if ! command -v isort &> /dev/null; then
-        echo "❌ 未找到 isort，请先安装：pip install isort"
-        return 1
-    fi
-
-    if ! command -v black &> /dev/null; then
-        echo "❌ 未找到 black，请先安装：pip install black"
-        return 1
+    if [ -f requests.txt ]; then
+        pip3 install -r requests.txt --break-system-packages > /dev/null
     fi
 
     start_time=$(date +%s)
@@ -37,6 +31,7 @@ format_py() {
         echo "✨ 格式化：$file"
         isort "$file"
         black "$file"
+        mypy "$file"
         echo "✅ 执行完毕 $file"
         echo "------------"
         count=$((count + 1))
