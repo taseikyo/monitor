@@ -12,7 +12,7 @@ for dir in */; do
         # 进入子目录
         echo "📂 进入目录: $dir"
         cd "$dir"
-        
+
         # 查找当前目录下的所有.py文件并执行
         for py_file in *.py; do
             if [ -f "$py_file" ]; then
@@ -25,7 +25,7 @@ for dir in */; do
                 echo "------------"
             fi
         done
-        
+
         # 返回上一级目录
         echo "🔙 返回上级目录"
         cd ..
