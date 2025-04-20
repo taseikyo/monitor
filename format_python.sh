@@ -7,12 +7,14 @@ format_py() {
     target_dir="${1:-.}"
 
     echo "🐍 Python 自动格式化工具"
+
+    if [ -f requirements.txt ]; then
+        echo "😎 安装 Python 依赖..."
+        pip3 install -r requirements.txt --break-system-packages > /dev/null
+    fi
+
     echo "📂 目标目录：$target_dir"
     echo "🔍 正在查找 Python 文件..."
-
-    if [ -f requests.txt ]; then
-        pip3 install -r requests.txt --break-system-packages > /dev/null
-    fi
 
     start_time=$(date +%s)
     count=0
