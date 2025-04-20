@@ -22,6 +22,7 @@ jobs:
       - name: Run Python
         run: |
           bash run_python.sh
+          bash clean_logs.sh
       - name: Update daily
         run: |
           git config --global user.name github-actions
