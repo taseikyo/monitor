@@ -17,8 +17,8 @@ for dir in */; do
         for py_file in *.py; do
             if [ -f "$py_file" ]; then
                 echo "🚀 执行 $py_file..."
-                if [ -f requests.txt ]; then
-                    pip3 install -r requests.txt --break-system-packages > /dev/null
+                if [ -f requirements.txt ]; then
+                    pip3 install -r requirements.txt --break-system-packages > /dev/null
                 fi
                 python3 "$py_file"
                 echo "✅ 执行完毕 $py_file"
