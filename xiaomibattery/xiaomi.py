@@ -8,18 +8,23 @@ import csv
 import json
 import logging
 import os
-import time
+from datetime import datetime
+from datetime import time as dtime
 from typing import Dict
+from zoneinfo import ZoneInfo
 
 import requests
 
 
 def get_today_timestamp() -> int:
-    t = time.localtime()
-    zero_time = time.struct_time(
-        (t.tm_year, t.tm_mon, t.tm_mday, 0, 0, 0, t.tm_wday, t.tm_yday, t.tm_isdst)
+    # 获取当前北京时间的日期
+    now = datetime.now(ZoneInfo("Asia/Shanghai"))
+    # 构造当天零点的 datetime 对象（仍在北京时间）
+    zero_time = datetime.combine(
+        now.date(), dtime.min, tzinfo=ZoneInfo("Asia/Shanghai")
     )
-    return int(time.mktime(zero_time))
+    # 转换为时间戳（UTC+0 秒数）
+    return int(zero_time.timestamp())
 
 
 def get_logger(
@@ -57,7 +62,11 @@ def battery_info() -> Dict[str, str]:
     }
 
     url = "https://api2.order.mi.com/product/view"
-    payload = {"version": "2", "product_id": "13396", "t": str(int(time.time()))}
+    payload = {
+        "version": "2",
+        "product_id": "13396",
+        "t": str(int(datetime.now(ZoneInfo("Asia/Shanghai")).timestamp())),
+    }
 
     try:
         response = session.get(url, params=payload, headers=headers, timeout=10)
