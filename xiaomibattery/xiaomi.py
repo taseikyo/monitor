@@ -8,18 +8,23 @@ import csv
 import json
 import logging
 import os
-import time
+from datetime import datetime
+from datetime import time as dtime
 from typing import Dict
+from zoneinfo import ZoneInfo
 
 import requests
 
 
 def get_today_timestamp() -> int:
-    t = time.localtime()
-    zero_time = time.struct_time(
-        (t.tm_year, t.tm_mon, t.tm_mday, 0, 0, 0, t.tm_wday, t.tm_yday, t.tm_isdst)
+    # 获取当前北京时间的日期
+    now = datetime.now(ZoneInfo("Asia/Shanghai"))
+    # 构造当天零点的 datetime 对象（仍在北京时间）
+    zero_time = datetime.combine(
+        now.date(), dtime.min, tzinfo=ZoneInfo("Asia/Shanghai")
     )
-    return int(time.mktime(zero_time))
+    # 转换为时间戳（UTC+0 秒数）
+    return int(zero_time.timestamp())
 
 
 def get_logger(
@@ -57,7 +62,11 @@ def battery_info() -> Dict[str, str]:
     }
 
     url = "https://api2.order.mi.com/product/view"
-    payload = {"version": "2", "product_id": "13396", "t": str(int(time.time()))}
+    payload = {
+        "version": "2",
+        "product_id": "13396",
+        "t": str(int(datetime.now(ZoneInfo("Asia/Shanghai")).timestamp())),
+    }
 
     try:
         response = session.get(url, params=payload, headers=headers, timeout=10)
@@ -105,24 +114,40 @@ def query_and_save_xiaomi13():
 
     filepath = "csv/xiaomi13.csv"
     file_exists = os.path.exists(filepath)
+
+    # 读取现有数据（如果存在）
+    existing_data = []
+    if file_exists:
+        with open(filepath, mode="r", newline="", encoding="utf-8") as read_f:
+            reader = csv.reader(read_f)
+            next(reader, None)
+            existing_data = list(reader)
+            if str(current_time) in {row[0] for row in existing_data}:
+                logger.warning(f"{current_time} exists, skip!")
+                return
+
+    # 写入新数据
     with open(
         filepath, mode="a" if file_exists else "w", newline="", encoding="utf-8"
     ) as f:
         writer = csv.writer(f)
-
-        # 写入表头（如果是新文件）
         if not file_exists:
             writer.writerow(["timestamp", "price"])
-
-        # 检查重复记录
-        if file_exists:
-            with open(filepath, mode="r", newline="", encoding="utf-8") as read_f:
-                if str(current_time) in {row[0] for row in csv.reader(read_f)}:
-                    logger.warning(f"{current_time} exists, skip!")
-                    return
-
         writer.writerow([current_time, price])
-        logger.info(f"time: {current_time}, price: {price}")
+        logger.info(f"写入成功：time: {current_time}, price: {price}")
+
+    # 清理14天前的数据
+    fourteen_days_ago = current_time - 14 * 24 * 3600
+    all_data = existing_data + [[str(current_time), price]]
+    filtered_data = [row for row in all_data if int(row[0]) >= fourteen_days_ago]
+
+    # 如有变动则重写文件
+    if len(filtered_data) < len(all_data):
+        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            writer.writerow(["timestamp", "price"])
+            writer.writerows(filtered_data)
+        logger.info("已清理14天前的数据")
 
 
 if __name__ == "__main__":
