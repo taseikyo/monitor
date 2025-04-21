@@ -13,13 +13,15 @@ for dir in */; do
         echo "📂 进入目录: $dir"
         cd "$dir"
 
+        if [ -f requirements.txt ]; then
+            echo "😎 安装 Python 依赖..."
+            pip3 install -r requirements.txt --break-system-packages > /dev/null
+        fi
+
         # 查找当前目录下的所有.py文件并执行
         for py_file in *.py; do
             if [ -f "$py_file" ]; then
                 echo "🚀 执行 $py_file..."
-                if [ -f requirements.txt ]; then
-                    pip3 install -r requirements.txt --break-system-packages > /dev/null
-                fi
                 python3 "$py_file"
                 echo "✅ 执行完毕 $py_file"
                 echo "------------"
