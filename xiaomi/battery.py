@@ -6,51 +6,22 @@
 
 import csv
 import json
-import logging
 import os
+import sys
 from datetime import datetime
-from datetime import time as dtime
 from typing import Dict
 from zoneinfo import ZoneInfo
 
 import requests
 
+# 添加项目根目录到 sys.path，确保能导入 bootstrap.py
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
 
-def get_today_timestamp() -> int:
-    # 获取当前北京时间的日期
-    now = datetime.now(ZoneInfo("Asia/Shanghai"))
-    # 构造当天零点的 datetime 对象（仍在北京时间）
-    zero_time = datetime.combine(
-        now.date(), dtime.min, tzinfo=ZoneInfo("Asia/Shanghai")
-    )
-    # 转换为时间戳（UTC+0 秒数）
-    return int(zero_time.timestamp())
-
-
-def get_logger(
-    path: str = "log", log_id: str = str(get_today_timestamp())
-) -> logging.Logger:
-    if not os.path.exists(path):
-        os.mkdir(path)
-
-    logger = logging.getLogger(log_id)
-    logger.setLevel(logging.INFO)
-
-    if not logger.handlers:
-        logfile = f"{path}/{log_id}.log"
-        fh = logging.FileHandler(logfile, mode="w", encoding="utf-8")
-        ch = logging.StreamHandler()
-
-        formatter = logging.Formatter(
-            "%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s: %(message)s"
-        )
-        fh.setFormatter(formatter)
-        ch.setFormatter(formatter)
-
-        logger.addHandler(fh)
-        logger.addHandler(ch)
-
-    return logger
+import bootstrap  # noqa: F401, E402
+from utils.logger import get_logger  # noqa: E402
+from utils.timer import get_today_timestamp  # noqa: E402
 
 
 def battery_info() -> Dict[str, str]:

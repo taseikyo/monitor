@@ -31,9 +31,12 @@ format_py() {
 
     for file in "${py_files[@]}"; do
         echo "✨ 格式化：$file"
-        isort "$file"
-        black "$file"
+        echo "  ✨ mypy：$file"
         mypy "$file"
+        echo "  ✨ isort：$file"
+        isort "$file"
+        echo "  ✨ black：$file"
+        black "$file"
         echo "✅ 执行完毕 $file"
         echo "------------"
         count=$((count + 1))
