@@ -20,6 +20,8 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
       - name: Run Python
+        env:
+          JD_COOKIE: ${{ secrets.JD_COOKIE }}
         run: |
           bash run_python.sh
           bash clean_logs.sh
