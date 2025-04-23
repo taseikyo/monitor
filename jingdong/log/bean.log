@@ -1,0 +1,3 @@
+2025-04-23 00:42:44,218 - bean.py:37 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-23 00:42:44,218 - bean.py:38 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"2","continuityAward":{"title":"恭喜您获得连签奖励","beanAward":{"beanCount":"5","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"3","tomorrowSendBeans":0}}
+2025-04-23 00:42:44,219 - bean.py:81 - INFO: 今天获得京豆：5
