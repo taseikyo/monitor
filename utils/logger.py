@@ -6,38 +6,65 @@ import inspect
 import logging
 import os
 from datetime import datetime, timedelta
+from logging import Logger
 from logging.handlers import TimedRotatingFileHandler
 
 
-# ========== 判断当前是否为北京时间 ==========
-def is_beijing_time():
+def is_beijing_time() -> bool:
+    """
+    判断当前系统时间是否与北京时间同步（UTC+8）。
+
+    返回:
+        bool: 如果当前系统时间接近北京时间，则返回 True。
+    """
     now = datetime.now()
     utc_now = datetime.utcnow()
     offset = now - utc_now
-    # 允许一点误差（±1分钟）避免 DST、系统偏差影响
+    # 允许 1 分钟误差范围，以避免 DST 或系统时间误差干扰
     return abs(offset - timedelta(hours=8)) < timedelta(minutes=1)
 
 
-# ========== 自定义 Handler（模拟北京时间轮转） ==========
 class BeijingTimedRotatingFileHandler(TimedRotatingFileHandler):
-    def computeRollover(self, currentTime):
-        # 北京时间偏移（8小时）
-        beijing_offset = 8 * 60 * 60
+    """
+    基于北京时间的日志轮转 handler，用于在非 UTC+8 时区模拟北京时间行为。
+    """
+
+    def computeRollover(self, currentTime: int) -> int:
+        """
+        修改日志轮转的时间点，使其按照北京时间计算。
+        """
+        beijing_offset = 8 * 60 * 60  # 北京时间比 UTC 快 8 小时
         currentTime += beijing_offset
         rolloverAt = super().computeRollover(currentTime)
         return rolloverAt - beijing_offset
 
 
-# ========== 通用日志工厂 ==========
 def get_logger(
-    name=None, when="midnight", interval=1, backup_count=7, encoding="utf-8"
-):
-    # 获取调用者路径
+    name: str = "",
+    when: str = "midnight",
+    interval: int = 1,
+    backup_count: int = 7,
+    encoding: str = "utf-8",
+) -> Logger:
+    """
+    获取一个支持控制台输出和按天轮转的日志记录器。
+
+    参数:
+        name (str): logger 名称，默认为调用脚本的文件名。
+        when (str): 日志轮转的时间单位，默认为 "midnight"（每天轮转）。
+        interval (int): 轮转间隔数量（与 `when` 联合使用）。
+        backup_count (int): 最多保留的历史日志文件数量。
+        encoding (str): 写入日志文件的编码方式。
+
+    返回:
+        logging.Logger: 配置好的 logger 实例。
+    """
+    # 获取调用者所在文件路径
     frame = inspect.stack()[1]
     caller_file = frame.filename
     caller_dir = os.path.dirname(os.path.abspath(caller_file))
 
-    # 构建 log 目录
+    # 创建 log 目录
     log_dir = os.path.join(caller_dir, "log")
     os.makedirs(log_dir, exist_ok=True)
 
@@ -53,18 +80,18 @@ def get_logger(
             "%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s: %(message)s"
         )
 
-        # 控制台 handler
+        # 控制台输出
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
         console_handler.setFormatter(formatter)
         logger.addHandler(console_handler)
 
-        # 文件 handler（自动判断时区）
-        if is_beijing_time():
-            handler_class = TimedRotatingFileHandler
-        else:
-            handler_class = BeijingTimedRotatingFileHandler
-
+        # 文件日志输出（判断是否需要用北京时间轮转）
+        handler_class = (
+            TimedRotatingFileHandler
+            if is_beijing_time()
+            else BeijingTimedRotatingFileHandler
+        )
         file_handler = handler_class(
             filename=log_file,
             when=when,
