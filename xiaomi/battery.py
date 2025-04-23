@@ -4,7 +4,6 @@
 # @Version: 3.13
 # @Desc:    监控小米13电池服务价格变化
 
-import csv
 import json
 import os
 import sys
@@ -20,6 +19,8 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 import bootstrap  # noqa: F401, E402
+from utils.csver import save_and_clean  # noqa: E402
+from utils.filer import update_readme_with_table  # noqa: E402
 from utils.logger import get_logger  # noqa: E402
 from utils.timer import get_today_timestamp  # noqa: E402
 
@@ -74,51 +75,28 @@ def battery_info() -> Dict[str, str]:
 
 
 def query_and_save_xiaomi13():
-    if not os.path.exists("csv"):
-        os.mkdir("csv")
-
-    current_time = get_today_timestamp()
+    logger = get_logger()
     binfo = battery_info()
     key = "Xiaomi 13 电池换新服务"
-    price = binfo.get(key, "未找到")
-    logger = get_logger()
+    price = binfo.get(key, "-1")
+    if price != "-1":
+        logger.info(f"✅ 今日 Xiaomi 13 电池换新服务价格：{price}")
+    else:
+        logger.warning("⚠️ 获取失败")
+        return
 
-    filepath = "csv/xiaomi13.csv"
-    file_exists = os.path.exists(filepath)
+    current_directory = os.path.dirname(__file__)
+    csv_dir = os.path.join(current_directory, "csv")
+    os.makedirs(csv_dir, exist_ok=True)
+    filepath = os.path.join(csv_dir, "xiaomi13.csv")
+    save_and_clean(
+        filepath, logger, ["timestamp", "price"], [get_today_timestamp(), price], 14
+    )
 
-    # 读取现有数据（如果存在）
-    existing_data = []
-    if file_exists:
-        with open(filepath, mode="r", newline="", encoding="utf-8") as read_f:
-            reader = csv.reader(read_f)
-            next(reader, None)
-            existing_data = list(reader)
-            if str(current_time) in {row[0] for row in existing_data}:
-                logger.warning(f"{current_time} exists, skip!")
-                return
-
-    # 写入新数据
-    with open(
-        filepath, mode="a" if file_exists else "w", newline="", encoding="utf-8"
-    ) as f:
-        writer = csv.writer(f)
-        if not file_exists:
-            writer.writerow(["timestamp", "price"])
-        writer.writerow([current_time, price])
-        logger.info(f"写入成功：time: {current_time}, price: {price}")
-
-    # 清理14天前的数据
-    fourteen_days_ago = current_time - 14 * 24 * 3600
-    all_data = existing_data + [[str(current_time), price]]
-    filtered_data = [row for row in all_data if int(row[0]) >= fourteen_days_ago]
-
-    # 如有变动则重写文件
-    if len(filtered_data) < len(all_data):
-        with open(filepath, mode="w", newline="", encoding="utf-8") as f:
-            writer = csv.writer(f)
-            writer.writerow(["timestamp", "price"])
-            writer.writerows(filtered_data)
-        logger.info("已清理14天前的数据")
+    parent_directory = os.path.dirname(current_directory)
+    update_readme_with_table(
+        logger, filepath, f"{parent_directory}/README.md", "xiaomi13battery"
+    )
 
 
 if __name__ == "__main__":
