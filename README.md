@@ -6,9 +6,29 @@
 
 - battery.py: 监控小米 13 电池服务
 
+<!-- xiaomi13battery-start -->
+
+| timestamp | price |
+| --- | --- |
+| 2025-04-19 00:00:00 | 199 |
+| 2025-04-20 00:00:00 | 199 |
+| 2025-04-21 00:00:00 | 199 |
+| 2025-04-22 00:00:00 | 199 |
+| 2025-04-23 00:00:00 | 199 |
+
+<!-- xiaomi13battery-end -->
+
 ## Jingdong
 
 - bean.py: 自动签到拿京豆
+
+<!-- jingdongbean-start -->
+
+| timestamp | count |
+| --- | --- |
+| 2025-04-23 00:00:00 | 5 |
+
+<!-- jingdongbean-end -->
 
 ## License
 
