@@ -23,7 +23,11 @@ if project_root not in sys.path:
 
 import bootstrap  # noqa: F401, E402
 from utils.logger import get_logger  # noqa: E402
-from utils.timer import get_today_timestamp, to_beijing_time  # noqa: E402
+from utils.timer import (  # noqa: E402
+    get_today_timestamp,
+    to_beijing_time,
+    to_beijing_time_str,
+)
 
 # 定义结构
 WBAlbum = namedtuple(
@@ -85,7 +89,7 @@ async def download_all_images(ual: List[WBAlbum], uid: str):
             save_dir = os.path.join(
                 current_directory, "images", uid, dt.strftime("%Y"), dt.strftime("%m")
             )
-            save_path = os.path.join(save_dir, f"{item.pic_name}")
+            save_path = os.path.join(save_dir, f"{item.timestamp}_{item.pic_name}")
             tasks.append(download_image(session, url, save_path, sem))
         await asyncio.gather(*tasks)
 
@@ -138,36 +142,35 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
             item = {key: photo.get(key, DefaultValues[key]) for key in fields}
             wb_album = WBAlbum(**item)
             wb_album_list.append(wb_album)
-            if wb_album.timestamp < timestamp:
+            if wb_album.timestamp > timestamp:
                 should_break = True
-                break
 
-        if should_break:
+        if should_break or len(wb_album_list) == 0:
             break
 
     return wb_album_list
 
 
-def get_and_save_photo():
+def get_and_save_photo(uids: List[str]):
     parser = argparse.ArgumentParser(
         description="获取微博图片",
-        epilog="例如：python get_user_album.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
+        epilog="例如：python get_and_save_photo.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
     )
     parser.add_argument("--cookie", required=False, help="WB Cookie，用于身份认证")
     args = parser.parse_args()
 
     cookie = args.cookie or os.getenv("WB_COOKIE", "")
-
-    uid = "3186116445"
     today = get_today_timestamp() - 3600 * 24 * 7
-    ual = get_user_album(uid, cookie, today)
-    logger = get_logger()
-    if not ual:
-        logger.warning(f"{uid} {today} no photo!")
-        return
+    for uid in uids:
+        ual = get_user_album(uid, cookie, today)
+        logger = get_logger()
+        if not ual:
+            logger.warning(f"{to_beijing_time_str(today)}, {uid} has no photo!")
+            continue
 
-    asyncio.run(download_all_images(ual, uid))
+        asyncio.run(download_all_images(ual, uid))
 
 
 if __name__ == "__main__":
-    get_and_save_photo()
+    uids = ["3186116445", "1749139802"]
+    get_and_save_photo(uids)
