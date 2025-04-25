@@ -83,7 +83,7 @@ def get_bean(cookie: str = "") -> int:
 def get_and_save_bean():
     parser = argparse.ArgumentParser(
         description="自动签到领京豆",
-        epilog="例如：python sign_bean.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
+        epilog="例如：python get_bean.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
     )
     parser.add_argument("--cookie", required=False, help="JD Cookie，用于身份认证")
     args = parser.parse_args()

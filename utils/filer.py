@@ -5,7 +5,8 @@
 
 import csv
 import logging
-from datetime import datetime
+
+from timer import to_beijing_time_str
 
 
 def csv_to_markdown_table(csv_path: str) -> str:
@@ -35,7 +36,7 @@ def csv_to_markdown_table(csv_path: str) -> str:
             if i == 0:  # 默认第一列为时间戳
                 try:
                     ts = int(val)
-                    val = datetime.fromtimestamp(ts).strftime("%Y-%m-%d %H:%M:%S")
+                    val = to_beijing_time_str(ts)
                 except Exception:
                     pass
             formatted_row.append(val)
