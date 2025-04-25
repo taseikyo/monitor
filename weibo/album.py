@@ -160,7 +160,7 @@ def get_and_save_photo(uids: List[str]):
     args = parser.parse_args()
 
     cookie = args.cookie or os.getenv("WB_COOKIE", "")
-    today = get_today_timestamp() - 3600 * 24 * 7
+    today = get_today_timestamp()
     for uid in uids:
         ual = get_user_album(uid, cookie, today)
         logger = get_logger()
