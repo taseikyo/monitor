@@ -87,7 +87,7 @@ async def download_all_images(ual: List[WBAlbum], uid: str):
             url = f"{item.pic_host}/large/{item.pic_name}"
             dt = to_beijing_time(item.timestamp)
             save_dir = os.path.join(
-                current_directory, "images", uid, dt.strftime("%Y"), dt.strftime("%m")
+                current_directory, "images", uid, dt.strftime("%Y%m")
             )
             save_path = os.path.join(save_dir, f"{item.timestamp}_{item.pic_name}")
             tasks.append(download_image(session, url, save_path, sem))
@@ -142,7 +142,7 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
             item = {key: photo.get(key, DefaultValues[key]) for key in fields}
             wb_album = WBAlbum(**item)
             wb_album_list.append(wb_album)
-            if wb_album.timestamp > timestamp:
+            if wb_album.timestamp < timestamp:
                 should_break = True
 
         if should_break or len(wb_album_list) == 0:
@@ -172,5 +172,12 @@ def get_and_save_photo(uids: List[str]):
 
 
 if __name__ == "__main__":
-    uids = ["3186116445", "1749139802"]
+    # 萌宠
+    uid_animal = ["3186116445", "1749139802"]
+    # 明星
+    uid_star = ["1669879400", "3261134763", "1676082433"]
+    # 表情包
+    uid_meme = ["2632260340", "5553432114"]
+
+    uids = uid_animal + uid_star + uid_meme
     get_and_save_photo(uids)
