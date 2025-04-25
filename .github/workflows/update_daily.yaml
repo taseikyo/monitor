@@ -22,6 +22,7 @@ jobs:
       - name: Run Python
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
+          WB_COOKIE: ${{ secrets.WB_COOKIE }}
         run: |
           bash run_python.sh
           bash clean_logs.sh
