@@ -109,7 +109,7 @@ def get_and_save_bean():
     filepath = os.path.join(csv_dir, "bean.csv")
 
     save_and_clean(
-        filepath, logger, ["timestamp", "count"], [get_today_timestamp(), count], 14
+        filepath, logger, ["timestamp", "count"], [get_today_timestamp(), count], 7
     )
 
     parent_directory = os.path.dirname(current_directory)

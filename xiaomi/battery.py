@@ -90,7 +90,7 @@ def query_and_save_xiaomi13():
     os.makedirs(csv_dir, exist_ok=True)
     filepath = os.path.join(csv_dir, "xiaomi13.csv")
     save_and_clean(
-        filepath, logger, ["timestamp", "price"], [get_today_timestamp(), price], 14
+        filepath, logger, ["timestamp", "price"], [get_today_timestamp(), price], 7
     )
 
     parent_directory = os.path.dirname(current_directory)
