@@ -38,6 +38,14 @@
 
 <!-- jingdongbean-end -->
 
+## Weibo
+
+- album.py - 每天下载指定 UID 用户的图片
+
+## Pixiv
+
+- ranking.py - 每天下载排行榜 TOP 100（两页）的图片
+
 ## License
 
 Copyright (c) 2025 Lewis Tian. Licensed under the MIT license.
