@@ -23,7 +23,16 @@ from utils.logger import get_logger  # noqa: E402
 
 # 定义 namedtuple
 Illustration = namedtuple(
-    "Illustration", ["title", "url", "illust_type", "user_name", "illust_id", "user_id"]
+    "Illustration",
+    [
+        "title",
+        "url",
+        "illust_type",
+        "user_name",
+        "illust_id",
+        "user_id",
+        "illust_page_count",
+    ],
 )
 
 DefaultValues = {
@@ -33,6 +42,7 @@ DefaultValues = {
     "user_name": "",
     "illust_id": 0,
     "user_id": 0,
+    "illust_page_count": "1",
 }
 
 MAX_RETRIES = 3
@@ -87,6 +97,12 @@ def rank_today_list(
         for content in contents:
             tmp = {key: content.get(key, DefaultValues.get(key)) for key in fields}
             item = Illustration(**tmp)
+            # 超过一张图的不要
+            if int(item.illust_page_count) > 1:
+                logger.warning(
+                    f"id: {item.illust_id} count {item.illust_page_count} skip!"
+                )
+                continue
             pixiv_list.append(item)
             logger.info(f"item: {item}")
 
