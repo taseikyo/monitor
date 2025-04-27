@@ -44,7 +44,7 @@
 
 ## Pixiv
 
-- rankding.py - 每天下载排行榜 TOP 100（两页）的图片
+- ranking.py - 每天下载排行榜 TOP 100（两页）的图片
 
 ## License
 
