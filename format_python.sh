@@ -37,6 +37,8 @@ format_py() {
         isort "$file"
         echo "  ✨ black：$file"
         black "$file"
+        echo "  ✨ flake8：$file"
+        flake8 "$file"
         echo "✅ 执行完毕 $file"
         echo "------------"
         count=$((count + 1))
