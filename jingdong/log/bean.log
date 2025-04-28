@@ -17,3 +17,7 @@
 2025-04-27 00:47:03,143 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"2","continuityAward":{"title":"恭喜您获得连签奖励","beanAward":{"beanCount":"15","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"7","tomorrowSendBeans":0}}
 2025-04-27 00:47:03,144 - bean.py:103 - INFO: ✅ 今日获得京豆数量：15
 2025-04-27 00:47:03,149 - csver.py:61 - INFO: 写入成功：[1745683200, 15]
+2025-04-28 00:45:34,798 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-28 00:45:34,798 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"2","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"8","tomorrowSendBeans":0}}
+2025-04-28 00:45:34,798 - bean.py:103 - INFO: ✅ 今日获得京豆数量：2
+2025-04-28 00:45:34,798 - csver.py:61 - INFO: 写入成功：[1745769600, 2]
