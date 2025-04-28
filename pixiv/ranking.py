@@ -75,9 +75,7 @@ def rank_today_list(
                 base_url, params=payload, headers=headers, timeout=10
             )
             logger.info(f"Request URL: {response.url}")
-            logger.info(
-                f"Response Text: {response.text.replace(' ', '').replace('\\n', '')}"
-            )
+            logger.info(f"Response Text: {response.text}")
         except requests.RequestException as e:
             logger.error(f"Request failed: {e}")
             return []
@@ -123,9 +121,7 @@ def get_image_url(pid: int = 0) -> List[str]:
     try:
         response = requests.get(url, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
-        logger.info(
-            f"Response Text: {response.text.replace(' ', '').replace('\\n', '')}"
-        )
+        logger.info(f"Response Text: {response}")
         resp = response.json()
     except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
@@ -184,7 +180,6 @@ def get_url_basename(url: str) -> str:
 
 def download_image_stream(url: str, save_path: str, session: requests.Session) -> None:
     logger = get_logger()
-    logger.info(f"😎 准备下载: {save_path}")
     if os.path.exists(save_path):
         logger.info(f"📂 已存在，跳过下载: {save_path}")
         return

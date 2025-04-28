@@ -115,9 +115,7 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
         try:
             response = session.post(url, headers=headers, timeout=10)
             logger.info(f"Request URL: {response.url}")
-            logger.info(
-                f"Response Text: {response.text.replace(' ', '').replace('\n', '')}"
-            )
+            logger.info(f"Response Text: {response}")
         except requests.RequestException as e:
             logger.error(f"Request failed: {e}")
             return []
