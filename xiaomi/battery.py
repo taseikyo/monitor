@@ -43,9 +43,7 @@ def battery_info() -> Dict[str, str]:
     try:
         response = session.get(url, params=payload, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
-        logger.info(
-            f"Response Text: {response.text.replace(' ', '').replace('\n', '')}"
-        )
+        logger.info(f"Response Text: {response.text}")
     except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
         return {}
