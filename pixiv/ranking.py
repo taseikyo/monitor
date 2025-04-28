@@ -251,6 +251,6 @@ def get_and_save_today_rank_image(mode: str) -> None:
 
 
 if __name__ == "__main__":
-    modes = ["daily", "daily_r18"]
+    modes = ["daily", "weekly", "monthly", "rookie"]
     with Pool(processes=len(modes)) as pool:
         pool.map(get_and_save_today_rank_image, modes)
