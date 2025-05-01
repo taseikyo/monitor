@@ -6,11 +6,11 @@ import gzip
 import inspect
 import logging
 import os
+import re
 import shutil
 from datetime import datetime, timedelta
 from logging import Logger
 from logging.handlers import TimedRotatingFileHandler
-from typing import List, Tuple
 
 
 def is_beijing_time() -> bool:
@@ -30,87 +30,70 @@ def is_beijing_time() -> bool:
 
 
 class SmartCompressAndCleanupTimedRotatingFileHandler(TimedRotatingFileHandler):
-    """
-    扩展版的 TimedRotatingFileHandler：
-    - 轮转日志后自动压缩旧日志为 .gz 文件
-    - 自动清理超过指定天数的压缩日志
-    """
+    DATE_PATTERN = re.compile(r".*\.(\d{4}-\d{2}-\d{2})(\.gz)?$")
 
-    def doRollover(self) -> None:
-        """
-        重写轮转方法，增加压缩和清理逻辑。
-        """
+    def __init__(
+        self, *args, backupCount=7, compressBeforeDays=7, deleteBeforeDays=90, **kwargs
+    ):
+        super().__init__(*args, backupCount=backupCount, **kwargs)
+        self.compressBeforeDays = compressBeforeDays
+        self.deleteBeforeDays = deleteBeforeDays
+
+        self.doRollover()
+
+    def doRollover(self):
         super().doRollover()
         self.compress_old_logs()
         self.cleanup_very_old_logs()
 
-    def compress_old_logs(self) -> None:
-        """
-        将超过保留数量 (backupCount) 的旧日志文件压缩为 .gz 格式，并删除原文件。
-        """
-        dir_name, base_name = os.path.split(self.baseFilename)
-        file_names = os.listdir(dir_name)
-        prefix = base_name + "."
-        prefix_len = len(prefix)
+    def parse_date_from_filename(self, filename):
+        match = self.DATE_PATTERN.match(filename)
+        if match:
+            try:
+                return datetime.strptime(match.group(1), "%Y-%m-%d").date()
+            except Exception:
+                return None
+        return None
 
-        # 筛选出符合扩展名模式且未压缩的日志文件
-        logs: List[Tuple[datetime, str]] = []
-        for file_name in file_names:
-            if file_name.startswith(prefix) and not file_name.endswith(".gz"):
-                suffix = file_name[prefix_len:]
+    def compress_old_logs(self):
+        dirName, baseName = os.path.split(self.baseFilename)
+        fileNames = os.listdir(dirName)
+        prefix = baseName + "."
+        today = datetime.today().date()
+
+        for fileName in fileNames:
+            if fileName.startswith(prefix) and not fileName.endswith(".gz"):
+                suffix = fileName[len(prefix) :]  # noqa: E203
                 if self.extMatch.match(suffix):
-                    full_path = os.path.join(dir_name, file_name)
-                    mtime = datetime.fromtimestamp(os.path.getmtime(full_path))
-                    logs.append((mtime, full_path))
+                    fullPath = os.path.join(dirName, fileName)
+                    file_date = self.parse_date_from_filename(fileName)
+                    if file_date and (today - file_date).days > self.compressBeforeDays:
+                        gz_filepath = fullPath + ".gz"
+                        if not os.path.exists(gz_filepath):
+                            with open(fullPath, "rb") as f_in, gzip.open(
+                                gz_filepath, "wb"
+                            ) as f_out:
+                                shutil.copyfileobj(f_in, f_out)
+                            os.remove(fullPath)
+                            self._log_internal(f"Compressed: {fileName}")
 
-        logs.sort()
+    def cleanup_very_old_logs(self):
+        dirName, baseName = os.path.split(self.baseFilename)
+        fileNames = os.listdir(dirName)
+        today = datetime.today().date()
 
-        # 需要压缩的文件（超过保留数的）
-        logs_to_compress = (
-            logs[: -self.backupCount] if len(logs) > self.backupCount else []
-        )
+        for fileName in fileNames:
+            if fileName.startswith(baseName) and fileName.endswith(".gz"):
+                fullPath = os.path.join(dirName, fileName)
+                file_date = self.parse_date_from_filename(fileName)
+                if file_date and (today - file_date).days > self.deleteBeforeDays:
+                    os.remove(fullPath)
+                    self._log_internal(f"Deleted old log: {fileName}")
 
-        for _, filepath in logs_to_compress:
-            gz_filepath = filepath + ".gz"
-            if not os.path.exists(gz_filepath):
-                with open(filepath, "rb") as f_in, gzip.open(
-                    gz_filepath, "wb"
-                ) as f_out:
-                    shutil.copyfileobj(f_in, f_out)
-                os.remove(filepath)
-                self._log_info(f"Compressed and removed original: {filepath}")
-
-    def cleanup_very_old_logs(self, max_days: int = 90) -> None:
-        """
-        清理超过 max_days 天的压缩日志文件 (.gz)。
-
-        Args:
-            max_days (int): 保留的最大天数，默认 90 天。
-        """
-        dir_name, base_name = os.path.split(self.baseFilename)
-        file_names = os.listdir(dir_name)
-        now = datetime.now()
-        expire_time = now - timedelta(days=max_days)
-
-        for file_name in file_names:
-            if file_name.startswith(base_name) and file_name.endswith(".gz"):
-                full_path = os.path.join(dir_name, file_name)
-                file_mtime = datetime.fromtimestamp(os.path.getmtime(full_path))
-                if file_mtime < expire_time:
-                    os.remove(full_path)
-                    self._log_info(f"Deleted old compressed log: {full_path}")
-
-    def _log_info(self, message: str) -> None:
-        """
-        内部辅助函数，直接向当前日志流写入一条 INFO 级别的记录。
-        用于自身处理日志（压缩、清理）的反馈，而不会打扰主 logger。
-
-        Args:
-            message (str): 要写入的日志内容。
-        """
-        record = self.formatter.format(
-            logging.LogRecord(
-                name="internal",
+    def _log_internal(self, message):
+        try:
+            record = logging.LogRecord(
+                name="log.internal",
                 level=logging.INFO,
                 pathname=__file__,
                 lineno=0,
@@ -118,9 +101,9 @@ class SmartCompressAndCleanupTimedRotatingFileHandler(TimedRotatingFileHandler):
                 args=(),
                 exc_info=None,
             )
-        )
-        self.stream.write(record + "\n")
-        self.flush()
+            self.emit(record)
+        except Exception:
+            pass
 
 
 def get_logger(
