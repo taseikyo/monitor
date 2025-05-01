@@ -1153,3 +1153,38 @@
 2025-04-30 00:44:40,482 - album.py:55 - INFO: 📂 已存在，跳过下载: /home/runner/work/monitor/monitor/weibo/images/5553432114/202503/1742877159_0063PDnIgy1hzt4ib4lmfj30m80m87ax.jpg
 2025-04-30 00:44:40,482 - album.py:55 - INFO: 📂 已存在，跳过下载: /home/runner/work/monitor/monitor/weibo/images/5553432114/202503/1742877159_0063PDnIgy1hzt4ibr18ej30m80m8n3t.jpg
 2025-04-30 00:44:40,483 - album.py:55 - INFO: 📂 已存在，跳过下载: /home/runner/work/monitor/monitor/weibo/images/5553432114/202503/1742523373_0063PDnIgy1hzodh6qplrj30m80m8gs8.jpg
+2025-05-01 00:51:39,364 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:42,248 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D3186116445%26count%3D30%26page%3D1%26type%3D3&_rand=1746060701.0931&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:42,248 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:42,248 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:42,249 - album.py:166 - WARNING: 2025-05-01 00:00:00, 3186116445 has no photo!
+2025-05-01 00:51:42,249 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:44,129 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1749139802%26count%3D30%26page%3D1%26type%3D3&_rand=1746060703.3015&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:44,129 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:44,129 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:44,130 - album.py:166 - WARNING: 2025-05-01 00:00:00, 1749139802 has no photo!
+2025-05-01 00:51:44,130 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:46,052 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1669879400%26count%3D30%26page%3D1%26type%3D3&_rand=1746060705.1966&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:46,052 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:46,052 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:46,052 - album.py:166 - WARNING: 2025-05-01 00:00:00, 1669879400 has no photo!
+2025-05-01 00:51:46,053 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:48,122 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D3261134763%26count%3D30%26page%3D1%26type%3D3&_rand=1746060707.2601&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:48,122 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:48,122 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:48,123 - album.py:166 - WARNING: 2025-05-01 00:00:00, 3261134763 has no photo!
+2025-05-01 00:51:48,123 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:50,024 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1676082433%26count%3D30%26page%3D1%26type%3D3&_rand=1746060709.1906&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:50,024 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:50,024 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:50,025 - album.py:166 - WARNING: 2025-05-01 00:00:00, 1676082433 has no photo!
+2025-05-01 00:51:50,025 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:51,876 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D2632260340%26count%3D30%26page%3D1%26type%3D3&_rand=1746060711.0509&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:51,876 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:51,876 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:51,877 - album.py:166 - WARNING: 2025-05-01 00:00:00, 2632260340 has no photo!
+2025-05-01 00:51:51,877 - album.py:109 - INFO: timestamp: 1746028800
+2025-05-01 00:51:53,809 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D5553432114%26count%3D30%26page%3D1%26type%3D3&_rand=1746060712.9555&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-01 00:51:53,809 - album.py:118 - INFO: Response Text: <Response [200]>
+2025-05-01 00:51:53,810 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-01 00:51:53,810 - album.py:166 - WARNING: 2025-05-01 00:00:00, 5553432114 has no photo!
