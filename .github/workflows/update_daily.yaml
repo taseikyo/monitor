@@ -1,24 +1,16 @@
-# This is a basic workflow to help you get started with Actions
-
 name: update_daily
 
-# Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
 on:
   schedule:
     - cron: '0 0 * * *'
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
   build:
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
+
       - name: Run Python
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
@@ -26,11 +18,38 @@ jobs:
         run: |
           bash run_python.sh
           bash clean_logs.sh
-      - name: Update daily
+
+      # 提交本仓库中的其他文件修改，排除所有 images 目录
+      - name: Commit and push changes to current repo (excluding all images/)
         run: |
+          shopt -s globstar # 启用 globstar
           git config --global user.name github-actions
           git config --global user.email '${GITHUB_ACTOR}@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/$GITHUB_REPOSITORY
+
           git add .
-          git commit -m "[GitHubBot] Update Daily" -a ||  true
-          git push --force origin HEAD:$GITHUB_REF || true
+          git reset **/images/  # 排除所有 images 目录
+          git commit -m "[GitHubBot] Update Daily" || true
+          git push origin HEAD:$GITHUB_REF || true
+
+      # 提交所有 images 目录的变动到 monitor-assets 仓库，按日期创建子文件夹
+      - name: Push all images/ changes to monitor-assets repo
+        run: |
+          # 获取当前日期，用于创建唯一的文件夹
+          DATE=$(date +%Y-%m-%d)
+
+          # 创建一个日期文件夹并将图片复制进去
+          mkdir -p "temp-images/$DATE"
+          find . -type d -name 'images' -exec cp -r {}/* "temp-images/$DATE/" \;
+
+          # 提交并推送到 monitor-assets
+          cd temp-images
+          git init
+          git config user.name github-actions
+          git config user.email '${GITHUB_ACTOR}@users.noreply.github.com'
+          git remote add origin https://x-access-token:${{ secrets.MONITOR_ASSETS_TOKEN }}@github.com/taseikyo/monitor-assets.git
+
+          git add .
+          git commit -m "[GitHubBot] Update images for $DATE"
+          git branch -M main
+          git push origin main
