@@ -51,10 +51,6 @@ async def download_image(
     session: ClientSession, url: str, save_path: str, sem: asyncio.Semaphore
 ):
     logger = get_logger()
-    if os.path.exists(save_path):
-        logger.info(f"📂 已存在，跳过下载: {save_path}")
-        return
-
     async with sem:
         for attempt in range(1, MAX_RETRIES + 1):
             try:
@@ -69,7 +65,7 @@ async def download_image(
                             if not chunk:
                                 break
                             f.write(chunk)
-                    logger.info(f"✅ 下载成功: {save_path}")
+                    logger.info(f"✅ 下载成功: {os.path.basename(save_path)}")
                     return
             except Exception as e:
                 logger.error(f"⚠️ 异常: {url}，第 {attempt} 次重试，错误: {e}")
@@ -107,7 +103,7 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
     }
 
     logger.info(f"timestamp: {timestamp}")
-    should_break = False
+    wb_album_list = []
     for p in range(1, 10):
         url = (
             f"https://photo.weibo.com/photos/get_all?uid={uid}&count=30&page={p}&type=3"
@@ -135,16 +131,17 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
 
         fields = WBAlbum._fields
 
-        wb_album_list = []
+        local_wb_album_list = []
         for photo in photo_list:
             item = {key: photo.get(key, DefaultValues[key]) for key in fields}
             wb_album = WBAlbum(**item)
-            wb_album_list.append(wb_album)
-            if wb_album.timestamp < timestamp:
-                should_break = True
+            if wb_album.timestamp >= timestamp:
+                local_wb_album_list.append(wb_album)
 
-        if should_break or len(wb_album_list) == 0:
+        if len(local_wb_album_list) == 0:
             break
+
+        wb_album_list += local_wb_album_list
 
     return wb_album_list
 
