@@ -42,15 +42,21 @@ jobs:
         run: |
           # 获取当前日期，用于创建唯一的文件夹
           DATE=$(date +%Y-%m-%d)
-
           # 创建一个日期文件夹并将图片复制进去
           mkdir -p "temp-images/$DATE"
-          find . -type d -name 'images' -exec cp -r {}/* "temp-images/$DATE/" \;
-          # 如果 temp-images/$DATE 是空的，就跳过 push
-          if [ -z "$(find temp-images/$DATE -type f)" ]; then
-            echo "No images found, skipping push."
-            exit 0
-          fi
+          # 避免空目录错误
+          shopt -s nullglob
+          find . -mindepth 2 -type d -name 'images' | while read imgdir; do
+            files=("$imgdir"/*)
+            if [ ${#files[@]} -eq 0 ]; then
+              echo "Skipping empty images directory: $imgdir"
+              continue
+            fi
+
+            parent_dir=$(basename "$(dirname "$imgdir")")
+            mkdir -p "temp-images/$DATE/$parent_dir"
+            mv "$imgdir/"* "temp-images/$DATE/$parent_dir/"
+          done
 
           # 输出当前目录
           pwd
