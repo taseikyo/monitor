@@ -47,9 +47,7 @@ def get_bean(cookie: str = "") -> int:
     try:
         response = session.post(url, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
-        logger.info(
-            f"Response Text: {response.text.replace(' ', '').replace('\n', '')}"
-        )
+        logger.info(f"Response Text: {response.text.replace('\n', '')}")
     except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
         return -1

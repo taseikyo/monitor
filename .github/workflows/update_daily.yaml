@@ -41,6 +41,15 @@ jobs:
           # 创建一个日期文件夹并将图片复制进去
           mkdir -p "temp-images/$DATE"
           find . -type d -name 'images' -exec cp -r {}/* "temp-images/$DATE/" \;
+          # 如果 temp-images/$DATE 是空的，就跳过 push
+          if [ -z "$(find temp-images/$DATE -type f)" ]; then
+            echo "No images found, skipping push."
+            exit 0
+          fi
+
+          # 输出当前目录
+          pwd
+          ls -Rt
 
           # 提交并推送到 monitor-assets
           cd temp-images
@@ -51,5 +60,4 @@ jobs:
 
           git add .
           git commit -m "[GitHubBot] Update images for $DATE"
-          git branch -M main
-          git push origin main
+          git push origin master
