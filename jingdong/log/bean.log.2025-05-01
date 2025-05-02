@@ -1,0 +1,36 @@
+2025-04-23 00:42:44,218 - bean.py:37 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-23 00:42:44,218 - bean.py:38 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"2","continuityAward":{"title":"恭喜您获得连签奖励","beanAward":{"beanCount":"5","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"3","tomorrowSendBeans":0}}
+2025-04-23 00:42:44,219 - bean.py:81 - INFO: 今天获得京豆：5
+2025-04-24 00:42:45,043 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-24 00:42:45,043 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"2","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"4","tomorrowSendBeans":0}}
+2025-04-24 00:42:45,043 - bean.py:103 - INFO: ✅ 今日获得京豆数量：2
+2025-04-24 00:42:45,050 - csver.py:61 - INFO: 写入成功：[1745424000, 2]
+2025-04-25 00:43:06,892 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-25 00:43:06,892 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"5","tomorrowSendBeans":0}}
+2025-04-25 00:43:06,892 - bean.py:103 - INFO: ✅ 今日获得京豆数量：1
+2025-04-25 00:43:06,893 - csver.py:61 - INFO: 写入成功：[1745510400, 1]
+2025-04-26 00:42:00,688 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-26 00:42:00,688 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"6","tomorrowSendBeans":0}}
+2025-04-26 00:42:00,688 - bean.py:103 - INFO: ✅ 今日获得京豆数量：1
+2025-04-26 00:42:00,689 - csver.py:61 - INFO: 写入成功：[1745596800, 1]
+2025-04-27 00:47:03,143 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-27 00:47:03,143 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"2","continuityAward":{"title":"恭喜您获得连签奖励","beanAward":{"beanCount":"15","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"7","tomorrowSendBeans":0}}
+2025-04-27 00:47:03,144 - bean.py:103 - INFO: ✅ 今日获得京豆数量：15
+2025-04-27 00:47:03,149 - csver.py:61 - INFO: 写入成功：[1745683200, 15]
+2025-04-28 00:45:34,798 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-28 00:45:34,798 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"2","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"8","tomorrowSendBeans":0}}
+2025-04-28 00:45:34,798 - bean.py:103 - INFO: ✅ 今日获得京豆数量：2
+2025-04-28 00:45:34,798 - csver.py:61 - INFO: 写入成功：[1745769600, 2]
+2025-04-29 00:43:31,063 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-29 00:43:31,063 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"9","tomorrowSendBeans":0}}
+2025-04-29 00:43:31,063 - bean.py:103 - INFO: ✅ 今日获得京豆数量：1
+2025-04-29 00:43:31,064 - csver.py:61 - INFO: 写入成功：[1745856000, 1]
+2025-04-30 00:44:23,789 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-04-30 00:44:23,789 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"2","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"10","tomorrowSendBeans":0}}
+2025-04-30 00:44:23,789 - bean.py:103 - INFO: ✅ 今日获得京豆数量：2
+2025-04-30 00:44:23,790 - csver.py:61 - INFO: 写入成功：[1745942400, 2]
+2025-05-01 00:51:35,369 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-05-01 00:51:35,370 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"11","tomorrowSendBeans":0}}
+2025-05-01 00:51:35,370 - bean.py:103 - INFO: ✅ 今日获得京豆数量：1
+2025-05-01 00:51:35,370 - csver.py:61 - INFO: 写入成功：[1746028800, 1]
+2025-05-01 00:51:35,392 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1745424000）

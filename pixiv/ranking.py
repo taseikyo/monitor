@@ -121,7 +121,7 @@ def get_image_url(pid: int = 0) -> List[str]:
     try:
         response = requests.get(url, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
-        logger.info(f"Response Text: {response}")
+        logger.info(f"Response Text: {response.text}")
         resp = response.json()
     except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
