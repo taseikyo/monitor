@@ -180,10 +180,6 @@ def get_url_basename(url: str) -> str:
 
 def download_image_stream(url: str, save_path: str, session: requests.Session) -> None:
     logger = get_logger()
-    if os.path.exists(save_path):
-        logger.info(f"📂 已存在，跳过下载: {save_path}")
-        return
-
     headers = {
         "referer": "https://www.pixiv.net/",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -192,15 +188,16 @@ def download_image_stream(url: str, save_path: str, session: requests.Session) -
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = session.get(url, headers=headers, stream=True)
-            if response.status_code == 200:
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "wb") as f:
-                    for chunk in response.iter_content(chunk_size=8192):  # 分块写入
-                        f.write(chunk)
-                logger.info(f"✅ 下载成功: {save_path}")
-                return
-            else:
+            if response.status_code != 200:
                 logger.warning(f"⚠️ 状态码 {response.status_code}，第 {attempt} 次重试: {url}")
+                continue
+            os.makedirs(os.path.dirname(save_path), exist_ok=True)
+            with open(save_path, "wb") as f:
+                for chunk in response.iter_content(chunk_size=8192):  # 分块写入
+                    f.write(chunk)
+            logger.info(f"✅ 下载成功: {os.path.basename(save_path)}")
+            return
+
         except requests.RequestException as e:
             logger.error(f"请求失败: {e}, 尝试重试第 {attempt} 次: {url}")
 
@@ -231,16 +228,35 @@ def get_and_save_today_rank_image(mode: str) -> None:
     current_directory = os.path.dirname(__file__)
     all_urls = []
     all_save_paths = []
+
+    # 已经下载的图片的 JSON 历史
+    already_downlaod_images_map = {}
+    already_downlaod_images_map_filepath = f"{current_directory}/rank.json"
+    with open(already_downlaod_images_map_filepath, "r") as f:
+        already_downlaod_images_map = json.load(f)
+
     for pixiv, urls in zip(pixiv_list, urls_list):
         logger.info(
             f"[{mode}] {pixiv.title} ({pixiv.illust_id} | {pixiv.user_id}): {urls}"
         )
+        if pixiv.user_id not in already_downlaod_images_map:
+            already_downlaod_images_map[pixiv.user_id] = []
+
         for url in urls:
-            save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
             basename = get_url_basename(url)
+            if basename in already_downlaod_images_map[pixiv.user_id]:
+                logger.info(f"📂 已存在，跳过下载: {basename}")
+                continue
+
+            already_downlaod_images_map[pixiv.user_id].append(basename)
+            save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
             save_path = os.path.join(save_dir, f"{basename}")
             all_urls.append(url)
             all_save_paths.append(save_path)
+
+    # 更新下载的图片的 JSON 历史
+    with open(already_downlaod_images_map_filepath, "w") as f:
+        json.dump(already_downlaod_images_map, f, ensure_ascii=False, indent=0)
 
     batch_download_images(all_urls, all_save_paths, max_workers=CONCURRENT_LIMIT)
 
