@@ -1,0 +1,119 @@
+2025-05-02 00:44:39,010 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:42,126 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D3186116445%26count%3D30%26page%3D1%26type%3D3&_rand=1746146680.4827&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:42,127 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=3186116445&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=3186116445&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:42,127 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:42,127 - album.py:166 - WARNING: 2025-05-02 00:00:00, 3186116445 has no photo!
+2025-05-02 00:44:42,128 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:43,659 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1749139802%26count%3D30%26page%3D1%26type%3D3&_rand=1746146682.9966&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:43,659 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=1749139802&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=1749139802&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:43,659 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:43,659 - album.py:166 - WARNING: 2025-05-02 00:00:00, 1749139802 has no photo!
+2025-05-02 00:44:43,660 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:45,212 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1669879400%26count%3D30%26page%3D1%26type%3D3&_rand=1746146684.5446&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:45,212 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=1669879400&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=1669879400&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:45,212 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:45,213 - album.py:166 - WARNING: 2025-05-02 00:00:00, 1669879400 has no photo!
+2025-05-02 00:44:45,213 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:46,488 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D3261134763%26count%3D30%26page%3D1%26type%3D3&_rand=1746146685.8244&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:46,489 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=3261134763&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=3261134763&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:46,489 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:46,489 - album.py:166 - WARNING: 2025-05-02 00:00:00, 3261134763 has no photo!
+2025-05-02 00:44:46,490 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:47,779 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D1676082433%26count%3D30%26page%3D1%26type%3D3&_rand=1746146687.1053&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:47,779 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=1676082433&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=1676082433&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:47,779 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:47,780 - album.py:166 - WARNING: 2025-05-02 00:00:00, 1676082433 has no photo!
+2025-05-02 00:44:47,780 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:49,080 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D2632260340%26count%3D30%26page%3D1%26type%3D3&_rand=1746146688.4135&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:49,080 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=2632260340&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=2632260340&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:49,080 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:49,081 - album.py:166 - WARNING: 2025-05-02 00:00:00, 2632260340 has no photo!
+2025-05-02 00:44:49,081 - album.py:109 - INFO: timestamp: 1746115200
+2025-05-02 00:44:50,364 - album.py:117 - INFO: Request URL: https://login.sina.com.cn/sso/login.php?url=https%3A%2F%2Fphoto.weibo.com%2Fphotos%2Fget_all%3Fuid%3D5553432114%26count%3D30%26page%3D1%26type%3D3&_rand=1746146689.7048&gateway=1&service=vphoto&entry=vphoto&useticket=0&returntype=META&sudaref=&_client_version=0.6.33
+2025-05-02 00:44:50,364 - album.py:118 - INFO: Response Text: 
+		<html>
+		<head>
+		<title>ÐÂÀËÍ¨ÐÐÖ¤</title>
+		<meta http-equiv="refresh" content="0; url=&#39;https://photo.weibo.com/photos/get_all?uid=5553432114&count=30&page=1&type=3&display=0&retcode=6102&#39;"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=GBK" />
+		</head>
+		<body bgcolor="#ffffff" text="#000000" link="#0000cc" vlink="#551a8b" alink="#ff0000">
+		<script type="text/javascript" language="javascript">
+		location.replace("https://photo.weibo.com/photos/get_all?uid=5553432114&count=30&page=1&type=3&display=0&retcode=6102");
+		</script>
+		</body>
+		</html>
+2025-05-02 00:44:50,364 - album.py:126 - ERROR: JSON decode failed: Expecting value: line 2 column 3 (char 3)
+2025-05-02 00:44:50,365 - album.py:166 - WARNING: 2025-05-02 00:00:00, 5553432114 has no photo!
