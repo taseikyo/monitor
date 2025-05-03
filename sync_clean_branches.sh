@@ -8,6 +8,7 @@ current_branch=$(git rev-parse --abbrev-ref HEAD)
 if [ "$current_branch" != "master" ]; then
   echo "🔄 切换到 master 分支..."
   git checkout master
+  git pull
 else
   echo "✅ 已经在 master 分支，无需切换。"
 fi
