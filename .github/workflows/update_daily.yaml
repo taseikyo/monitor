@@ -22,7 +22,7 @@ jobs:
           WB_COOKIE: ${{ secrets.WB_COOKIE }}
         run: |
           bash run_python.sh
-          bash clean_logs.sh
+          bash manage.sh clean_logs
 
       # 提交本仓库中的其他文件修改，排除所有 images 目录
       - name: Commit and push changes to current repo (excluding all images/)
