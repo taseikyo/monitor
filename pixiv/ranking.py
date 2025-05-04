@@ -5,7 +5,7 @@
 import json
 import os
 import sys
-from collections import defaultdict, namedtuple
+from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from glob import glob
 from multiprocessing import Pool
@@ -20,31 +20,8 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 import bootstrap  # noqa: F401, E402
+from model.pixiv_illustration import PixivItem, PixivResponse  # noqa: E402
 from utils.logger import get_logger  # noqa: E402
-
-# 定义 namedtuple
-Illustration = namedtuple(
-    "Illustration",
-    [
-        "title",
-        "url",
-        "illust_type",
-        "user_name",
-        "illust_id",
-        "user_id",
-        "illust_page_count",
-    ],
-)
-
-DefaultValues = {
-    "title": "",
-    "url": "",
-    "illust_type": "",
-    "user_name": "",
-    "illust_id": 0,
-    "user_id": 0,
-    "illust_page_count": "1",
-}
 
 MAX_RETRIES = 3
 CONCURRENT_LIMIT = 10
@@ -52,7 +29,7 @@ CONCURRENT_LIMIT = 10
 
 def rank_today_list(
     date: str = "", mode: str = "daily", max_page: int = 10
-) -> List[Illustration]:
+) -> List[PixivItem]:
     logger = get_logger()
     session = requests.Session()
     headers = {
@@ -91,19 +68,15 @@ def rank_today_list(
             logger.warning("Empty response.")
             return []
 
-        contents = resp.get("contents", [])
-        fields = Illustration._fields
-        for content in contents:
-            tmp = {key: content.get(key, DefaultValues.get(key)) for key in fields}
-            item = Illustration(**tmp)
-            # 超过一张图的不要
-            if int(item.illust_page_count) > 1:
+        pixivResponse = PixivResponse.model_validate(resp)
+        for content in pixivResponse.contents:
+            if content.illust_page_count > 1:
                 logger.warning(
-                    f"id: {item.illust_id} count {item.illust_page_count} skip!"
+                    f"id: {content.illust_id} count {content.illust_page_count} skip!"
                 )
                 continue
-            pixiv_list.append(item)
-            logger.info(f"item: {item}")
+
+            pixiv_list.append(content)
 
     return pixiv_list
 
