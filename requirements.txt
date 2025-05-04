@@ -4,3 +4,4 @@ mypy
 flake8
 flake8-pyproject
 bitarray
+pydantic

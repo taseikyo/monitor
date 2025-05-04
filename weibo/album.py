@@ -9,7 +9,6 @@ import asyncio
 import json
 import os
 import sys
-from collections import namedtuple
 from typing import List
 
 import aiohttp
@@ -22,26 +21,10 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 import bootstrap  # noqa: F401, E402
+from model.weibo_album import AlbumItem, AlbumResponse  # noqa: E402
 from utils.logger import get_logger  # noqa: E402
-from utils.timer import (  # noqa: E402
-    get_today_timestamp,
-    to_beijing_time,
-    to_beijing_time_str,
-)
-
-# 定义结构
-WBAlbum = namedtuple(
-    "WBAlbum", ["caption", "caption_render", "pic_host", "pic_name", "timestamp"]
-)
-
-DefaultValues = {
-    "caption": "",
-    "caption_render": "",
-    "pic_host": "",
-    "pic_name": "",
-    "timestamp": 0,
-}
-
+from utils.timer import get_today_timestamp, to_beijing_time  # noqa: E402
+from utils.timer import to_beijing_time_str as bj_time_str  # noqa: E402
 
 MAX_RETRIES = 3
 CONCURRENT_LIMIT = 10
@@ -74,7 +57,7 @@ async def download_image(
         logger.error(f"❌ 最终失败: {url}")
 
 
-async def download_all_images(ual: List[WBAlbum], uid: str):
+async def download_all_images(ual: List[AlbumItem], uid: str):
     sem = asyncio.Semaphore(CONCURRENT_LIMIT)
     current_directory = os.path.dirname(__file__)
     async with aiohttp.ClientSession() as session:
@@ -90,7 +73,9 @@ async def download_all_images(ual: List[WBAlbum], uid: str):
         await asyncio.gather(*tasks)
 
 
-def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
+def get_user_album(
+    uid: str, cookie: str, sart_time: int, end_time: int
+) -> List[AlbumItem]:
     logger = get_logger()
     session = requests.Session()
     if len(uid) == 0 or len(cookie) == 0:
@@ -102,7 +87,7 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
         "cookie": cookie,
     }
 
-    logger.info(f"timestamp: {timestamp}")
+    logger.info(f"sart_time: {sart_time}, end_time: {end_time}")
     wb_album_list = []
     for p in range(1, 10):
         url = (
@@ -126,17 +111,15 @@ def get_user_album(uid: str, cookie: str, timestamp: int) -> List[WBAlbum]:
             logger.warning("Empty response.")
             return []
 
-        data = resp.get("data", {})
-        photo_list = data.get("photo_list", [])
-
-        fields = WBAlbum._fields
-
+        albumResponse = AlbumResponse.model_validate(resp)
         local_wb_album_list = []
-        for photo in photo_list:
-            item = {key: photo.get(key, DefaultValues[key]) for key in fields}
-            wb_album = WBAlbum(**item)
-            if wb_album.timestamp >= timestamp:
-                local_wb_album_list.append(wb_album)
+        for photo in albumResponse.data.photo_list:
+            if photo.timestamp < sart_time or photo.timestamp > end_time:
+                logger.info(
+                    f"❌ skip: {photo.pic_name}, time: {bj_time_str(photo.timestamp)}"
+                )
+                continue
+            local_wb_album_list.append(photo)
 
         if len(local_wb_album_list) == 0:
             break
@@ -156,11 +139,14 @@ def get_and_save_photo(uids: List[str]):
 
     cookie = args.cookie or os.getenv("WB_COOKIE", "")
     today = get_today_timestamp()
+    yesterday = today - 24 * 60 * 60
     for uid in uids:
-        ual = get_user_album(uid, cookie, today)
+        ual = get_user_album(uid, cookie, yesterday, today)
         logger = get_logger()
         if not ual:
-            logger.warning(f"{to_beijing_time_str(today)}, {uid} has no photo!")
+            logger.warning(
+                f"range: {bj_time_str(yesterday)} - {bj_time_str(today)}, {uid} empty!"
+            )
             continue
 
         asyncio.run(download_all_images(ual, uid))

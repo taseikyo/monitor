@@ -5,7 +5,7 @@
 import os
 import sys
 
-PROJECT_DIRS = ["utils"]
+PROJECT_DIRS = ["utils", "model"]
 
 
 def init():
