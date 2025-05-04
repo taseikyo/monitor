@@ -26,6 +26,6 @@ else
   echo "🧹 删除以下本地分支（远端已删除）:"
   echo "$gone_branches"
   # 删除这些本地分支（已合并的），未合并的不会被删除
-  echo "$gone_branches" | xargs git branch -d
+  echo "$gone_branches" | xargs git branch -D
   echo "✅ 已删除以上本地分支。"
 fi
