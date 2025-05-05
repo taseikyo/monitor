@@ -30,10 +30,14 @@ def is_beijing_time() -> bool:
 
 
 class SmartCompressAndCleanupTimedRotatingFileHandler(TimedRotatingFileHandler):
+    """
+    7天内的日志文件不压缩，超过7天的日志文件压缩为 .gz 格式，超过30天的日志文件删除。
+    """
+
     DATE_PATTERN = re.compile(r".*\.(\d{4}-\d{2}-\d{2})(\.gz)?$")
 
     def __init__(
-        self, *args, backupCount=7, compressBeforeDays=7, deleteBeforeDays=90, **kwargs
+        self, *args, backupCount=7, compressBeforeDays=7, deleteBeforeDays=30, **kwargs
     ):
         super().__init__(*args, backupCount=backupCount, **kwargs)
         self.compressBeforeDays = compressBeforeDays

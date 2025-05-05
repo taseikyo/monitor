@@ -36,6 +36,12 @@ process_directory() {
     echo "⏱️ 目录 $dir 执行完毕，耗时: $elapsed_time 秒"
 }
 
+# 检查当前目录下是否有 requirements.txt 文件；如果有，则安装依赖
+if [ -f requirements.txt ]; then
+    echo "😎 安装 Python 依赖..."
+    pip3 install -r requirements.txt --break-system-packages > /dev/null
+fi
+
 # 遍历当前目录下的所有子目录并行执行
 for dir in */; do
     # 检查是否是目录
