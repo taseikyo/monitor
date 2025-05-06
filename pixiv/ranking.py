@@ -204,45 +204,76 @@ def get_and_save_today_rank_image(mode: str) -> None:
     all_save_paths = []
 
     # 已经下载的图片的 JSON 历史
-    downlaod_images_local_map = {}
-    downlaod_images_global_map = {}
-    downlaod_images_map_local_filepath = f"{current_directory}/rank_{mode}.json"
-    downlaod_images_map_global_filepath = f"{current_directory}/rank.json"
-    if os.path.exists(downlaod_images_map_local_filepath):
-        with open(downlaod_images_map_local_filepath, "r") as f:
-            downlaod_images_local_map = json.load(f)
-    if os.path.exists(downlaod_images_map_global_filepath):
-        with open(downlaod_images_map_global_filepath, "r") as f:
-            downlaod_images_global_map = json.load(f)
+    download_images_local_map = {}
+    download_images_global_map = {}
+    download_images_map_local_filepath = f"{current_directory}/rank_{mode}.json"
+    download_images_map_global_filepath = f"{current_directory}/rank.json"
+    if os.path.exists(download_images_map_local_filepath):
+        with open(download_images_map_local_filepath, "r") as f:
+            download_images_local_map = json.load(f)
+    if os.path.exists(download_images_map_global_filepath):
+        with open(download_images_map_global_filepath, "r") as f:
+            download_images_global_map = json.load(f)
 
     for pixiv, urls in zip(pixiv_list, urls_list):
         logger.info(
             f"[{mode}] {pixiv.title} ({pixiv.illust_id} | {pixiv.user_id}): {urls}"
         )
-        if pixiv.user_id not in downlaod_images_local_map:
-            downlaod_images_local_map[pixiv.user_id] = []
+        if pixiv.user_id not in download_images_local_map:
+            download_images_local_map[pixiv.user_id] = []
 
         for url in urls:
             basename = get_url_basename(url)
-            if basename in downlaod_images_global_map.get(pixiv.user_id, []):
+            if basename in download_images_global_map.get(str(pixiv.user_id), []):
                 logger.info(f"📂 已存在，跳过下载: {basename}")
                 continue
 
-            if basename in downlaod_images_local_map[pixiv.user_id]:
+            if basename in download_images_local_map[(str(pixiv.user_id))]:
                 logger.info(f"📂 已存在，跳过下载: {basename}")
                 continue
 
-            downlaod_images_local_map[pixiv.user_id].append(basename)
+            download_images_local_map[pixiv.user_id].append(basename)
             save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
             save_path = os.path.join(save_dir, f"{basename}")
             all_urls.append(url)
             all_save_paths.append(save_path)
 
     # 更新下载的图片的 JSON 历史
-    with open(downlaod_images_map_local_filepath, "w") as f:
-        json.dump(downlaod_images_local_map, f, ensure_ascii=False, indent=0)
+    with open(download_images_map_local_filepath, "w") as f:
+        json.dump(download_images_local_map, f, ensure_ascii=False, indent=0)
 
     batch_download_images(all_urls, all_save_paths, max_workers=CONCURRENT_LIMIT)
+
+
+def merge_all_json_files():
+    logger = get_logger()
+    current_directory = os.path.dirname(__file__)
+    json_files = glob(
+        os.path.join(current_directory, "rank*.json")
+    )  # 匹配 rank.json + rank_*.json
+    output_filepath = os.path.join(current_directory, "rank.json")
+    merged = defaultdict(set)
+
+    for file in json_files:
+        try:
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            for k, v in data.items():
+                if isinstance(v, list):
+                    merged[k].update(v)  # 使用 set 去重
+                else:
+                    logger.warning(f"Value for key '{k}' in {file} is not a list")
+        except Exception as e:
+            logger.error(f"Error processing file {file}: {e}")
+
+    try:
+        # 将 set 转为 list，并排序（可选）
+        result = {k: sorted(list(v)) for k, v in merged.items()}
+        with open(output_filepath, "w", encoding="utf-8") as f:
+            json.dump(result, f, ensure_ascii=False, indent=0)
+        logger.info(f"Merge completed. Output saved to {output_filepath}")
+    except Exception as e:
+        logger.error(f"Error writing output file: {e}")
 
 
 if __name__ == "__main__":
@@ -250,18 +281,4 @@ if __name__ == "__main__":
     with Pool(processes=len(modes)) as pool:
         pool.map(get_and_save_today_rank_image, modes)
 
-    # 匹配所有 .json 文件
-    current_directory = os.path.dirname(__file__)
-    json_files = glob(f"{current_directory}/rank_*.json")
-    downlaod_images_map_global_filepath = f"{current_directory}/rank.json"
-    merged = defaultdict(list)
-
-    for file in json_files:
-        with open(file, "r") as f:
-            data = json.load(f)
-            for k, v in data.items():
-                merged[k].extend(v)  # v 是 list
-
-    result = dict(merged)
-    with open(downlaod_images_map_global_filepath, "w") as f:
-        json.dump(result, f, ensure_ascii=False, indent=0)
+    merge_all_json_files()
