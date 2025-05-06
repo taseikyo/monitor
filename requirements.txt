@@ -5,3 +5,5 @@ flake8
 flake8-pyproject
 bitarray
 pydantic
+requests
+aiohttp
