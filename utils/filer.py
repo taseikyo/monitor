@@ -58,7 +58,7 @@ def update_readme_with_table(
     """
     table_md = csv_to_markdown_table(csv_path)
     if len(table_md) == 0:
-        logger.warn("empty csv data")
+        logger.warning("empty csv data")
         return
 
     with open(readme_path, "r", encoding="utf-8") as f:

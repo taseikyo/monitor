@@ -42,11 +42,19 @@
 
 ## Weibo
 
-- album.py - 每天下载指定 UID 用户的图片
+- album.py: 每天下载指定 UID 用户的图片
 
 ## Pixiv
 
-- ranking.py - 每天下载排行榜 TOP 100（两页）的图片
+- ranking.py: 每天下载排行榜 TOP 100（两页）的图片
+
+## Ctrip
+
+- sign.py: 协程自动签到
+
+<!-- ctrip_sign-start -->
+
+<!-- ctrip_sign-end -->
 
 ## License
 
