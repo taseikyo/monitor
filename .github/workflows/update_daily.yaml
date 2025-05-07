@@ -20,6 +20,7 @@ jobs:
         env:
           JD_COOKIE: ${{ secrets.JD_COOKIE }}
           WB_COOKIE: ${{ secrets.WB_COOKIE }}
+          CTRIP_COOKIE: ${{ secrets.CTRIP_COOKIE }}
         run: |
           bash run_python.sh
           bash manage.sh clean_logs
