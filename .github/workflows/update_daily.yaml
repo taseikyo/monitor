@@ -41,7 +41,7 @@ jobs:
       - name: Push all images/ changes to monitor-assets repo
         run: |
           # 获取当前日期，用于创建唯一的文件夹
-          DATE=$(date +%Y-%m-%d)
+          DATE=$(date +%Y/%m/%d)
           # 创建一个日期文件夹并将图片复制进去
           mkdir -p "temp-images/$DATE"
           # 避免空目录错误
