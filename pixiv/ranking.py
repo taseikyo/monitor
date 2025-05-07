@@ -8,7 +8,7 @@ import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from glob import glob
-from multiprocessing import Pool
+from logging import Logger
 from typing import List
 from urllib.parse import urlparse
 
@@ -28,9 +28,8 @@ CONCURRENT_LIMIT = 10
 
 
 def rank_today_list(
-    date: str = "", mode: str = "daily", max_page: int = 10
+    logger: Logger, date: str = "", mode: str = "daily", max_page: int = 10
 ) -> List[PixivItem]:
-    logger = get_logger()
     session = requests.Session()
     headers = {
         "referer": "https://www.pixiv.net/ranking.php",
@@ -81,11 +80,10 @@ def rank_today_list(
     return pixiv_list
 
 
-def get_image_url(pid: int = 0) -> List[str]:
+def get_image_url(logger: Logger, pid: int = 0) -> List[str]:
     if pid == 0:
         return []
 
-    logger = get_logger()
     headers = {
         "referer": "https://www.pixiv.net/ranking.php",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -124,12 +122,14 @@ def get_image_url(pid: int = 0) -> List[str]:
     return pid_urls
 
 
-def batch_get_image_urls(pids: List[int], max_workers: int = 10) -> List[List[str]]:
+def batch_get_image_urls(
+    logger: Logger, pids: List[int], max_workers: int = 10
+) -> List[List[str]]:
     results = []
-    logger = get_logger()
-
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
-        future_to_pid = {executor.submit(get_image_url, pid): pid for pid in pids}
+        future_to_pid = {
+            executor.submit(get_image_url, logger, pid): pid for pid in pids
+        }
         for future in as_completed(future_to_pid):
             pid = future_to_pid[future]
             try:
@@ -143,17 +143,14 @@ def batch_get_image_urls(pids: List[int], max_workers: int = 10) -> List[List[st
 
 
 def get_url_basename(url: str) -> str:
-    # 解析URL
     parsed_url = urlparse(url)
-
-    # 从URL路径中提取文件名
     basename = os.path.basename(parsed_url.path)
-
     return basename
 
 
-def download_image_stream(url: str, save_path: str, session: requests.Session) -> None:
-    logger = get_logger()
+def download_image_stream(
+    logger: Logger, url: str, save_path: str, session: requests.Session
+) -> None:
     headers = {
         "referer": "https://www.pixiv.net/",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
@@ -167,7 +164,7 @@ def download_image_stream(url: str, save_path: str, session: requests.Session) -
                 continue
             os.makedirs(os.path.dirname(save_path), exist_ok=True)
             with open(save_path, "wb") as f:
-                for chunk in response.iter_content(chunk_size=8192):  # 分块写入
+                for chunk in response.iter_content(chunk_size=8192):
                     f.write(chunk)
             logger.info(f"✅ 下载成功: {os.path.basename(save_path)}")
             return
@@ -179,26 +176,23 @@ def download_image_stream(url: str, save_path: str, session: requests.Session) -
 
 
 def batch_download_images(
-    urls: List[str], save_paths: List[str], max_workers: int = 10
+    logger: Logger, urls: List[str], save_paths: List[str], max_workers: int = 10
 ) -> None:
     with requests.Session() as session:
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            # 使用线程池并发下载
             futures = [
-                executor.submit(download_image_stream, url, save_path, session)
+                executor.submit(download_image_stream, logger, url, save_path, session)
                 for url, save_path in zip(urls, save_paths)
             ]
-            # 等待所有任务完成
             for future in futures:
                 future.result()
 
 
-def get_and_save_today_rank_image(mode: str) -> None:
-    logger = get_logger()
-    pixiv_list = rank_today_list(mode=mode, max_page=2)
+def get_and_save_today_rank_image(logger: Logger, mode: str) -> None:
+    pixiv_list = rank_today_list(logger, mode=mode, max_page=2)
     pids = [pixiv.illust_id for pixiv in pixiv_list]
 
-    urls_list = batch_get_image_urls(pids, max_workers=10)
+    urls_list = batch_get_image_urls(logger, pids, max_workers=10)
     current_directory = os.path.dirname(__file__)
     all_urls = []
     all_save_paths = []
@@ -219,38 +213,36 @@ def get_and_save_today_rank_image(mode: str) -> None:
         logger.info(
             f"[{mode}] {pixiv.title} ({pixiv.illust_id} | {pixiv.user_id}): {urls}"
         )
-        if pixiv.user_id not in download_images_local_map:
-            download_images_local_map[pixiv.user_id] = []
+        if str(pixiv.user_id) not in download_images_local_map:
+            download_images_local_map[str(pixiv.user_id)] = []
 
         for url in urls:
             basename = get_url_basename(url)
             if basename in download_images_global_map.get(str(pixiv.user_id), []):
-                logger.info(f"📂 已存在，跳过下载: {basename}")
+                logger.info(f"📂 已存在于 global，跳过下载: {basename}")
                 continue
 
             if basename in download_images_local_map[(str(pixiv.user_id))]:
-                logger.info(f"📂 已存在，跳过下载: {basename}")
+                logger.info(f"📂 已存在于 local，跳过下载: {basename}")
                 continue
 
-            download_images_local_map[pixiv.user_id].append(basename)
+            download_images_local_map[str(pixiv.user_id)].append(basename)
             save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
             save_path = os.path.join(save_dir, f"{basename}")
             all_urls.append(url)
             all_save_paths.append(save_path)
 
-    # 更新下载的图片的 JSON 历史
     with open(download_images_map_local_filepath, "w") as f:
         json.dump(download_images_local_map, f, ensure_ascii=False, indent=0)
 
-    batch_download_images(all_urls, all_save_paths, max_workers=CONCURRENT_LIMIT)
+    batch_download_images(
+        logger, all_urls, all_save_paths, max_workers=CONCURRENT_LIMIT
+    )
 
 
-def merge_all_json_files():
-    logger = get_logger()
+def merge_all_json_files(logger: Logger) -> None:
     current_directory = os.path.dirname(__file__)
-    json_files = glob(
-        os.path.join(current_directory, "rank*.json")
-    )  # 匹配 rank.json + rank_*.json
+    json_files = glob(os.path.join(current_directory, "rank*.json"))
     output_filepath = os.path.join(current_directory, "rank.json")
     merged = defaultdict(set)
 
@@ -260,14 +252,13 @@ def merge_all_json_files():
                 data = json.load(f)
             for k, v in data.items():
                 if isinstance(v, list):
-                    merged[k].update(v)  # 使用 set 去重
+                    merged[k].update(v)
                 else:
                     logger.warning(f"Value for key '{k}' in {file} is not a list")
         except Exception as e:
             logger.error(f"Error processing file {file}: {e}")
 
     try:
-        # 将 set 转为 list，并排序（可选）
         result = {k: sorted(list(v)) for k, v in merged.items()}
         with open(output_filepath, "w", encoding="utf-8") as f:
             json.dump(result, f, ensure_ascii=False, indent=0)
@@ -278,7 +269,13 @@ def merge_all_json_files():
 
 if __name__ == "__main__":
     modes = ["daily", "weekly", "monthly", "rookie"]
-    with Pool(processes=len(modes)) as pool:
-        pool.map(get_and_save_today_rank_image, modes)
+    logger = get_logger()
+    with ThreadPoolExecutor(max_workers=len(modes)) as executor:
+        futures = [
+            executor.submit(get_and_save_today_rank_image, logger, mode)
+            for mode in modes
+        ]
+        for future in futures:
+            future.result()
 
-    merge_all_json_files()
+    merge_all_json_files(logger)

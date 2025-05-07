@@ -8,6 +8,7 @@ import argparse
 import json
 import os
 import sys
+from logging import Logger
 
 import requests
 
@@ -23,17 +24,17 @@ from utils.logger import get_logger  # noqa: E402
 from utils.timer import get_today_timestamp  # noqa: E402
 
 
-def get_bean(cookie: str = "") -> int:
+def get_bean(logger: Logger, cookie: str = "") -> int:
     """
     通过京东签到接口请求今天的京豆数量
 
      参数:
-         cookie（str）: 京东登录的 Cookie
+        logger（Logger）: 日志记录器
+        cookie（str）: 京东登录的 Cookie
 
      返回:
-         成功则返回京豆数量，失败返回 -1
+        成功则返回京豆数量，失败返回 -1
     """
-    logger = get_logger()
     session = requests.Session()
     url = "https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple"  # noqa: E501
     if not cookie:
@@ -78,7 +79,7 @@ def get_bean(cookie: str = "") -> int:
     return int(beanCount)
 
 
-def get_and_save_bean():
+def get_and_save_bean(logger: Logger) -> None:
     parser = argparse.ArgumentParser(
         description="自动签到领京豆",
         epilog="例如：python get_bean.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
@@ -87,13 +88,11 @@ def get_and_save_bean():
     args = parser.parse_args()
 
     cookie = args.cookie or os.getenv("JD_COOKIE", "")
-    logger = get_logger()
-
     if not cookie:
         logger.error("未提供 Cookie")
         return
 
-    count = get_bean(cookie)
+    count = get_bean(logger, cookie)
     if count < 0:
         logger.warning("⚠️ 签到失败，未获得京豆")
         return
@@ -117,4 +116,5 @@ def get_and_save_bean():
 
 
 if __name__ == "__main__":
-    get_and_save_bean()
+    logger = get_logger()
+    get_and_save_bean(logger)

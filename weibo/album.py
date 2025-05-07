@@ -9,6 +9,7 @@ import asyncio
 import json
 import os
 import sys
+from logging import Logger
 from typing import List
 
 import aiohttp
@@ -31,9 +32,12 @@ CONCURRENT_LIMIT = 10
 
 
 async def download_image(
-    session: ClientSession, url: str, save_path: str, sem: asyncio.Semaphore
+    logger: Logger,
+    session: ClientSession,
+    url: str,
+    save_path: str,
+    sem: asyncio.Semaphore,
 ):
-    logger = get_logger()
     async with sem:
         for attempt in range(1, MAX_RETRIES + 1):
             try:
@@ -57,7 +61,7 @@ async def download_image(
         logger.error(f"❌ 最终失败: {url}")
 
 
-async def download_all_images(ual: List[AlbumItem], uid: str):
+async def download_all_images(logger: Logger, ual: List[AlbumItem], uid: str):
     sem = asyncio.Semaphore(CONCURRENT_LIMIT)
     current_directory = os.path.dirname(__file__)
     async with aiohttp.ClientSession() as session:
@@ -69,14 +73,13 @@ async def download_all_images(ual: List[AlbumItem], uid: str):
                 current_directory, "images", uid, dt.strftime("%Y%m")
             )
             save_path = os.path.join(save_dir, f"{item.timestamp}_{item.pic_name}")
-            tasks.append(download_image(session, url, save_path, sem))
+            tasks.append(download_image(logger, session, url, save_path, sem))
         await asyncio.gather(*tasks)
 
 
 def get_user_album(
-    uid: str, cookie: str, sart_time: int, end_time: int
+    logger: Logger, uid: str, cookie: str, sart_time: int, end_time: int
 ) -> List[AlbumItem]:
-    logger = get_logger()
     session = requests.Session()
     if len(uid) == 0 or len(cookie) == 0:
         logger.warning("Empty uid or cookie!")
@@ -129,7 +132,10 @@ def get_user_album(
     return wb_album_list
 
 
-def get_and_save_photo(uids: List[str]):
+def get_and_save_photo(logger: Logger, uids: List[str]) -> None:
+    """
+    获取微博图片并保存到本地
+    """
     parser = argparse.ArgumentParser(
         description="获取微博图片",
         epilog="例如：python get_and_save_photo.py --cookie 'pt_key=xxx;pt_pin=yyy;'",
@@ -141,15 +147,14 @@ def get_and_save_photo(uids: List[str]):
     today = get_today_timestamp()
     yesterday = today - 24 * 60 * 60
     for uid in uids:
-        ual = get_user_album(uid, cookie, yesterday, today)
-        logger = get_logger()
+        ual = get_user_album(logger, uid, cookie, yesterday, today)
         if not ual:
             logger.warning(
                 f"range: {bj_time_str(yesterday)} - {bj_time_str(today)}, {uid} empty!"
             )
             continue
 
-        asyncio.run(download_all_images(ual, uid))
+        asyncio.run(download_all_images(logger, ual, uid))
 
 
 if __name__ == "__main__":
@@ -161,4 +166,5 @@ if __name__ == "__main__":
     uid_meme = ["2632260340", "5553432114"]
 
     uids = uid_animal + uid_star + uid_meme
-    get_and_save_photo(uids)
+    logger = get_logger()
+    get_and_save_photo(logger, uids)
