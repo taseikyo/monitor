@@ -125,6 +125,13 @@ def get_image_url(logger: Logger, pid: int = 0) -> List[str]:
 def batch_get_image_urls(
     logger: Logger, pids: List[int], max_workers: int = 10
 ) -> List[List[str]]:
+    """
+    批量获取图片的 URL
+    :param logger: 日志记录器
+    :param pids: 图片 ID 列表
+    :param max_workers: 最大线程数
+    :return: 图片 URL 列表
+    """
     results = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
         future_to_pid = {
