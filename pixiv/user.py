@@ -5,7 +5,9 @@
 import json
 import os
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from logging import Logger
+from threading import Lock
 from typing import Dict, List
 
 import requests
@@ -19,6 +21,8 @@ if project_root not in sys.path:
 import bootstrap  # noqa: F401, E402
 from model.pixiv_illustration import PixivItemUrlInfo, PixivUserTopItem  # noqa: E402
 from utils.logger import get_logger  # noqa: E402
+
+CONCURRENT_LIMIT = 10
 
 
 def get_user_top_items(logger: Logger, user_id: str) -> List[PixivUserTopItem]:
@@ -105,10 +109,11 @@ def download_user_top_images(
     all_urls = []
     all_save_paths = []
     download_images_local_map = {}
+    current_directory = os.path.dirname(__file__)
     pixiv_list = get_user_top_items(logger, user_id)
     pids = [pixiv.id for pixiv in pixiv_list]
-    logger.info(f"Processing user: {uid}, pids: {pids}")
-    urls_list = batch_get_image_urls(logger, pids, 10)
+    logger.info(f"Processing user: {user_id}, pids: {pids}")
+    urls_list = batch_get_image_urls(logger, pids, CONCURRENT_LIMIT)
     for pixiv, urls in zip(pixiv_list, urls_list):
         if len(urls) > 1:
             logger.warning(f"`{pixiv.id}` has multiple URLs: {len(urls)}")
@@ -130,30 +135,44 @@ def download_user_top_images(
             all_save_paths.append(save_path)
     try:
         if len(all_urls) > 0:
-            batch_download_images(logger, all_urls, all_save_paths, 10)
-
+            batch_download_images(logger, all_urls, all_save_paths, CONCURRENT_LIMIT)
         return download_images_local_map
     except Exception as e:
         logger.error(f"Error downloading images: {e}")
+        return {}
 
 
-if __name__ == "__main__":
+def main():
     logger = get_logger()
     current_directory = os.path.dirname(__file__)
     download_images_map_global_filepath = f"{current_directory}/rank.json"
     download_images_global_map = {}
+
     if os.path.exists(download_images_map_global_filepath):
         with open(download_images_map_global_filepath, "r") as f:
             download_images_global_map = json.load(f)
 
-    for uid in download_images_global_map.keys():
-        download_images_local_map = download_user_top_images(
-            logger, uid, download_images_global_map
-        )
-        for user_id, images in download_images_local_map.items():
-            if user_id not in download_images_global_map:
-                download_images_global_map[user_id] = []
-            download_images_global_map[user_id].extend(images)
+    map_lock = Lock()
+
+    def process_user(uid: str):
+        try:
+            local_map = download_user_top_images(
+                logger, uid, download_images_global_map
+            )
+            with map_lock:
+                for user_id, images in local_map.items():
+                    if user_id not in download_images_global_map:
+                        download_images_global_map[user_id] = []
+                    download_images_global_map[user_id].extend(images)
+        except Exception as e:
+            logger.error(f"Error processing user {uid}: {e}")
+
+    with ThreadPoolExecutor(max_workers=CONCURRENT_LIMIT) as executor:
+        executor.map(process_user, list(download_images_global_map.keys()))
 
     with open(download_images_map_global_filepath, "w") as f:
         json.dump(download_images_global_map, f, ensure_ascii=False, indent=0)
+
+
+if __name__ == "__main__":
+    main()
