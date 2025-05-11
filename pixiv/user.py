@@ -172,7 +172,3 @@ def main():
 
     with open(download_images_map_global_filepath, "w") as f:
         json.dump(download_images_global_map, f, ensure_ascii=False, indent=0)
-
-
-if __name__ == "__main__":
-    main()
