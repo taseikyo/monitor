@@ -1,5 +1,0 @@
-2025-05-02 13:24:44,886 - bean.py:49 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
-2025-05-02 13:24:44,888 - bean.py:50 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"2","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"今天已签到，","subTitle":"获得奖励","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"12","tomorrowSendBeans":0}}
-2025-05-02 13:24:44,891 - bean.py:103 - INFO: ✅ 今日获得京豆数量：1
-2025-05-02 13:24:44,906 - csver.py:61 - INFO: 写入成功：[1746115200, 1]
-2025-05-02 13:24:44,922 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1745510400）
