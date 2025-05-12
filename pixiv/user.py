@@ -20,7 +20,7 @@ if project_root not in sys.path:
 
 import bootstrap  # noqa: F401, E402
 from model.pixiv_illustration import PixivItemUrlInfo, PixivUserTopItem  # noqa: E402
-from utils.logger import get_logger  # noqa: E402
+from utils.loguruer import get_loguru_logger  # noqa: E402
 
 CONCURRENT_LIMIT = 10
 
@@ -202,7 +202,7 @@ def download_user_top_images(
 
 
 def main():
-    logger = get_logger()
+    logger = get_loguru_logger()
 
     current_directory = os.path.dirname(__file__)
     download_images_map_global_filepath = f"{current_directory}/rank.json"
@@ -213,7 +213,8 @@ def main():
             download_images_global_map = json.load(f)
 
     map_lock = Lock()
-    favorite_count = 1000  # 仅下载红心数超过1k的图片
+    favorite_count = 5000  # 仅下载红心数超过2k的图片
+    user_ranking_times = 10  # 上榜10次的用户才配下载
 
     def process_user(uid: str):
         try:
@@ -230,7 +231,9 @@ def main():
 
     # 超过5张上榜的用户才有资格下载
     user_ids = [
-        uid for uid, images in download_images_global_map.items() if len(images) > 5
+        uid
+        for uid, images in download_images_global_map.items()
+        if len(images) > user_ranking_times
     ]
     logger.info(f"👥 Processing {len(user_ids)} users")
     with ThreadPoolExecutor(max_workers=CONCURRENT_LIMIT) as executor:
