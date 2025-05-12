@@ -25,6 +25,7 @@ from utils.logger import get_logger  # noqa: E402
 
 MAX_RETRIES = 3
 CONCURRENT_LIMIT = 10
+IMAGE_QUALITY = ["original", "regular", "small", "thumb_mini"]
 
 
 def rank_today_list(
@@ -107,12 +108,11 @@ def get_image_url(logger: Logger, pid: int = 0) -> List[str]:
         return []
 
     data = resp.get("body", [])
-    image_quality = ["original", "regular", "small", "thumb_mini"]
 
     pid_urls = []
     for pic in data:
         urls = pic.get("urls", {})
-        for x in image_quality:
+        for x in IMAGE_QUALITY:
             url = urls.get(x, "")
             if url:
                 pid_urls.append(url)

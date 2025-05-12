@@ -58,10 +58,14 @@ class PixivItemUrl(BaseModel):
 class PixivItemUrlInfo(BaseModel):
     viewCount: int  # 浏览数
     likeCount: int  # 点赞数
-    bookmarkCount: int  # 收藏数
+    bookmarkCount: int  # 收藏数，红心数
 
     title: str
     urls: PixivItemUrl
+
+    pageCount: int  # 图片数量
+
+    illustId: str
 
     class Config:
         extra = "ignore"
