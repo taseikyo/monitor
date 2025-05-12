@@ -39,31 +39,32 @@ def get_user_top_items(logger: Logger, user_id: str) -> Dict[int, PixivUserTopIt
     result = {}
     try:
         response = session.get(base_url, params=payload, headers=headers, timeout=10)
-        logger.info(f"Request URL: {response.url}")
-        logger.info(f"Response Text: {response.text}")
+        logger.info(f"🌐 Request URL: {response.url}")
+        logger.info(f"📄 Response Text: {response.text}")
     except requests.RequestException as e:
-        logger.error(f"Request failed: {e}")
+        logger.error(f"❌ Request failed: {e}")
         return result
 
     try:
         resp = response.json()
     except json.JSONDecodeError as e:
-        logger.error(f"JSON decode failed: {e}")
+        logger.error(f"❌ JSON decode failed: {e}")
         return result
 
     if not resp:
-        logger.warning("Empty response.")
+        logger.warning("⚠️  Empty response.")
         return result
 
     illusts = resp.get("body", {}).get("illusts", {})
     if not illusts:
-        logger.warning("No illustrations found.")
+        logger.warning("⚠️  No illustrations found.")
         return result
 
     for pid, illust in illusts.items():
         item = PixivUserTopItem.model_validate(illust)
         result[int(pid)] = item
 
+    logger.info(f"✅ Found {len(result)} top illustrations for user {user_id}")
     return result
 
 
@@ -82,24 +83,24 @@ def get_image_url_info(logger: Logger, pid: int) -> PixivItemUrlInfo:
 
     try:
         response = requests.get(url, headers=headers, timeout=10)
-        logger.info(f"Request URL: {response.url}")
-        logger.info(f"Response Text: {response.text.replace('\n', '')}")
+        logger.info(f"🔎 Request URL: {response.url}")
+        logger.info(f"📄 Response Text: {response.text}")
         resp = response.json()
     except requests.RequestException as e:
-        logger.error(f"Request failed: {e}")
+        logger.error(f"❌ Request failed: {e}")
         return None
     except json.JSONDecodeError as e:
-        logger.error(f"JSON decode failed: {e}")
+        logger.error(f"❌ JSON decode failed: {e}")
         return None
 
     if not resp:
-        logger.warning("Empty response.")
+        logger.warning("⚠️  Empty response.")
         return None
 
     try:
         return PixivItemUrlInfo.model_validate(resp.get("body", {}))
     except Exception as e:
-        logger.error(f"Failed to parse PixivItemUrlInfo: {e}")
+        logger.error(f"❌ Failed to parse PixivItemUrlInfo: {e}")
         return None
 
 
@@ -119,7 +120,7 @@ def batch_get_image_url_infos(
             try:
                 result[pid] = future.result()
             except Exception as e:
-                logger.error(f"Failed to get url for pid {pid}: {e}")
+                logger.error(f"❌ Failed to get url for pid {pid}: {e}")
                 result[pid] = None
 
     return result
@@ -135,23 +136,23 @@ def download_user_top_images(
     current_directory = os.path.dirname(__file__)
     user_top_images = get_user_top_items(logger, user_id)
     pids = list(user_top_images.keys())
-    logger.info(f"Processing user: {user_id}, pids: {pids}")
+    logger.info(f"🚀 Processing user: {user_id}, pids: {pids}")
 
     infoMap = batch_get_image_url_infos(logger, pids, CONCURRENT_LIMIT)
     to_be_downloaded_pids = []
     urls = []
     for pid, info in infoMap.items():
         if not info:
-            logger.warning(f"Failed to get image info for pid {pid}")
+            logger.warning(f"⚠️  Failed to get image info for pid {pid}")
             continue
 
         # 过滤掉多页的图片
         if info.pageCount > 1:
-            logger.info(f"Image {pid} has {info.pageCount} pages, skipping.")
+            logger.info(f"📖 Image {pid} has {info.pageCount} pages, skipping.")
             continue
 
         if info.bookmarkCount < favorite_count:
-            logger.info(f"Image {pid} has count {info.bookmarkCount}, skipping.")
+            logger.info(f"💔 Image {pid} has count {info.bookmarkCount}, skipping.")
             continue
 
         if info.urls.original:
@@ -165,10 +166,9 @@ def download_user_top_images(
         elif info.urls.mini:
             url = info.urls.mini
         else:
-            logger.warning(f"Image {pid} has no valid URL, skipping.")
+            logger.warning(f"⚠️  Image {pid} has no valid URL, skipping.")
             continue
         urls.append(url)
-
         to_be_downloaded_pids.append(pid)
 
     pixiv_list = [user_top_images[k] for k in to_be_downloaded_pids]
@@ -191,10 +191,13 @@ def download_user_top_images(
         all_save_paths.append(save_path)
     try:
         if len(all_urls) > 0:
+            logger.info(
+                f"📥 Start downloading {len(all_urls)} images for user {user_id}"
+            )
             batch_download_images(logger, all_urls, all_save_paths, CONCURRENT_LIMIT)
         return download_images_local_map
     except Exception as e:
-        logger.error(f"Error downloading images: {e}")
+        logger.error(f"❌ Error downloading images: {e}")
         return {}
 
 
@@ -223,18 +226,19 @@ def main():
                         download_images_global_map[user_id] = []
                     download_images_global_map[user_id].extend(images)
         except Exception as e:
-            logger.error(f"Error processing user {uid}: {e}")
+            logger.error(f"❌ Error processing user {uid}: {e}")
 
     # 超过5张上榜的用户才有资格下载
     user_ids = [
         uid for uid, images in download_images_global_map.items() if len(images) > 5
     ]
-    logger.info(f"Processing {len(user_ids)} users")
+    logger.info(f"👥 Processing {len(user_ids)} users")
     with ThreadPoolExecutor(max_workers=CONCURRENT_LIMIT) as executor:
         executor.map(process_user, user_ids)
 
     with open(download_images_map_global_filepath, "w") as f:
         json.dump(download_images_global_map, f, ensure_ascii=False, indent=0)
+    logger.info(f"✅ Finished. Updated {download_images_map_global_filepath}")
 
 
 if __name__ == "__main__":
