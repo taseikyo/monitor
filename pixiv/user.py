@@ -85,21 +85,21 @@ def download_user_top_images(
     urls = []
     for pid, info in infoMap.items():
         if not info:
-            logger.warning(f"⚠️  Failed to get image info for pid {pid}")
+            logger.warning(f"⚠️ Failed to get image info for pid {pid}")
             continue
 
         # 过滤掉多页的图片
         if info.pageCount > 1:
-            logger.info(f"📖 Image {pid} has {info.pageCount} pages, skipping.")
+            logger.info(f"📖 {pid} has {info.pageCount} pages, skipping.")
             continue
 
         if info.bookmarkCount < favorite_count:
-            logger.info(f"💔 Image {pid} has count {info.bookmarkCount}, skipping.")
+            logger.info(f"💔 {pid}' favorite count: {info.bookmarkCount}, skipping.")
             continue
 
         url = info.urls.get_url()
         if len(url) == 0:
-            logger.warning(f"⚠️  Image {pid} has no valid URL, skipping.")
+            logger.warning(f"⚠️ {pid} has no valid URL, skipping.")
             continue
         urls.append(url)
         to_be_downloaded_pids.append(pid)

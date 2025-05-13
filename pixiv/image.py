@@ -165,13 +165,10 @@ def batch_get_image_urls(
     return result
 
 
-def download_image_stream(
-    logger: logger, session: requests.Session, url: str, save_path: str
-) -> None:
+def download_image_stream(logger: logger, url: str, save_path: str) -> None:
     """
     下载图片
     :param logger: 日志记录器
-    :param session: requests 会话对象
     :param url: 图片 URL
     :param save_path: 保存路径
     """
@@ -180,9 +177,10 @@ def download_image_stream(
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     }
 
+    logger.info(f"🔄 开始下载: {url}, 保存位置: {save_path}")
     for attempt in range(1, MAX_RETRIES + 1):
         try:
-            response = session.get(url, headers=headers, stream=True)
+            response = requests.get(url, headers=headers, stream=True)
             if response.status_code != 200:
                 logger.warning(f"⚠️ 状态码 {response.status_code}，第 {attempt} 次重试: {url}")
                 continue
@@ -209,14 +207,13 @@ def batch_download_images(
     :param save_paths: 保存路径列表
     :param max_workers: 最大线程数
     """
-    with requests.Session() as session:
-        with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            futures = [
-                executor.submit(download_image_stream, logger, url, save_path, session)
-                for url, save_path in zip(urls, save_paths)
-            ]
-            for future in futures:
-                future.result()
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        futures = [
+            executor.submit(download_image_stream, logger, url, save_path)
+            for url, save_path in zip(urls, save_paths)
+        ]
+        for future in futures:
+            future.result()
 
 
 def get_url_basename(url: str) -> str:

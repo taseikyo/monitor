@@ -127,16 +127,16 @@ def download_today_rank_image(logger: logger, mode: str, favorite_count: int) ->
 
     for pixiv, url in zip(pixiv_list, urls):
         basename = get_url_basename(url)
-        if basename in download_images_global_map.get(str(pixiv.userId), []):
+        if basename in download_images_global_map.get(str(pixiv.user_id), []):
             logger.info(f"📂 Exists in global, skip: {basename}")
             continue
-        if basename in download_images_local_map.get(str(pixiv.userId), []):
+        if basename in download_images_local_map.get(str(pixiv.user_id), []):
             logger.info(f"📂 Exists in local, skip: {basename}")
             continue
         else:
-            download_images_local_map[str(pixiv.userId)] = []
-        download_images_local_map[str(pixiv.userId)].append(basename)
-        save_dir = os.path.join(current_directory, "images", f"{pixiv.userId}")
+            download_images_local_map[str(pixiv.user_id)] = []
+        download_images_local_map[str(pixiv.user_id)].append(basename)
+        save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
         save_path = os.path.join(save_dir, f"{basename}")
         all_urls.append(url)
         all_save_paths.append(save_path)
