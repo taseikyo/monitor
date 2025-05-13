@@ -54,6 +54,21 @@ class PixivItemUrl(BaseModel):
     class Config:
         extra = "ignore"
 
+    def get_url(self) -> str:
+        url = ""
+        if self.original:
+            url = self.original
+        elif self.regular:
+            url = self.regular
+        elif self.small:
+            url = self.small
+        elif self.thumb:
+            url = self.thumb
+        elif self.mini:
+            url = self.mini
+
+        return url
+
 
 class PixivItemUrlInfo(BaseModel):
     viewCount: int  # 浏览数
