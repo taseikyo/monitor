@@ -6,12 +6,17 @@ import json
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor
+from logging import Logger
 from threading import Lock
 from typing import Dict, List
 
 import requests
-from image import batch_download_images, batch_get_image_infos, get_url_basename
-from loguru import logger
+from image import (
+    batch_download_images,
+    batch_get_image_infos,
+    filter_and_save_image_by_map,
+    get_url_basename,
+)
 
 # 添加项目根目录到 sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -20,12 +25,12 @@ if project_root not in sys.path:
 
 import bootstrap  # noqa: F401, E402
 from model.pixiv_illustration import PixivUserTopItem  # noqa: E402
-from utils.loguruer import get_loguru_logger  # noqa: E402
+from utils.logger import get_logger  # noqa: E402
 
 CONCURRENT_LIMIT = 10
 
 
-def get_user_top_items(logger: logger, user_id: str) -> Dict[int, PixivUserTopItem]:
+def get_user_top_items(logger: Logger, user_id: str) -> Dict[int, PixivUserTopItem]:
     session = requests.Session()
     headers = {
         "referer": "https://www.pixiv.net/ranking.php",
@@ -69,7 +74,7 @@ def get_user_top_items(logger: logger, user_id: str) -> Dict[int, PixivUserTopIt
 
 
 def download_user_top_images(
-    logger: logger,
+    logger: Logger,
     user_id: str,
     favorite_count: int,
     download_images_global_map: Dict[str, List[str]],
@@ -90,16 +95,16 @@ def download_user_top_images(
 
         # 过滤掉多页的图片
         if info.pageCount > 1:
-            logger.info(f"📖 {pid} has {info.pageCount} pages, skipping.")
+            logger.info(f"📖 {pid} has {info.pageCount} pages, skip!")
             continue
 
         if info.bookmarkCount < favorite_count:
-            logger.info(f"💔 {pid}' favorite count: {info.bookmarkCount}, skipping.")
+            logger.info(f"💔 {pid}' favorite count: {info.bookmarkCount}, skip!")
             continue
 
         url = info.urls.get_url()
         if len(url) == 0:
-            logger.warning(f"⚠️ {pid} has no valid URL, skipping.")
+            logger.warning(f"⚠️ {pid} has no valid URL, skip!")
             continue
         urls.append(url)
         to_be_downloaded_pids.append(pid)
@@ -109,15 +114,14 @@ def download_user_top_images(
     all_save_paths = []
     for pixiv, url in zip(pixiv_list, urls):
         basename = get_url_basename(url)
-        if basename in download_images_global_map.get(str(pixiv.userId), []):
-            logger.info(f"📂 Exists in global, skip: {basename}")
+        if filter_and_save_image_by_map(
+            logger,
+            str(pixiv.userId),
+            basename,
+            download_images_global_map,
+            download_images_local_map,
+        ):
             continue
-        if basename in download_images_local_map.get(str(pixiv.userId), []):
-            logger.info(f"📂 Exists in local, skip: {basename}")
-            continue
-        else:
-            download_images_local_map[str(pixiv.userId)] = []
-        download_images_local_map[str(pixiv.userId)].append(basename)
         save_dir = os.path.join(current_directory, "images", f"{pixiv.userId}")
         save_path = os.path.join(save_dir, f"{basename}")
         all_urls.append(url)
@@ -135,7 +139,7 @@ def download_user_top_images(
 
 
 def main():
-    logger = get_loguru_logger()
+    logger = get_logger()
 
     current_directory = os.path.dirname(__file__)
     download_images_map_global_filepath = f"{current_directory}/rank.json"
