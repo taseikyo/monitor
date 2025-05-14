@@ -8,11 +8,16 @@ import sys
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
 from glob import glob
+from logging import Logger
 from typing import List
 
 import requests
-from image import batch_download_images, batch_get_image_infos, get_url_basename
-from loguru import logger
+from image import (
+    batch_download_images,
+    batch_get_image_infos,
+    filter_and_save_image_by_map,
+    get_url_basename,
+)
 
 # 添加项目根目录到 sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -21,7 +26,7 @@ if project_root not in sys.path:
 
 import bootstrap  # noqa: F401, E402
 from model.pixiv_illustration import PixivItem, PixivResponse  # noqa: E402
-from utils.loguruer import get_loguru_logger  # noqa: E402
+from utils.logger import get_logger  # noqa: E402
 
 MAX_RETRIES = 3
 CONCURRENT_LIMIT = 10
@@ -29,7 +34,7 @@ IMAGE_QUALITY = ["original", "regular", "small", "thumb_mini"]
 
 
 def rank_today_list(
-    logger: logger, date: str = "", mode: str = "daily", max_page: int = 10
+    logger: Logger, date: str = "", mode: str = "daily", max_page: int = 10
 ) -> List[PixivItem]:
     session = requests.Session()
     headers = {
@@ -81,7 +86,7 @@ def rank_today_list(
     return pixiv_list
 
 
-def download_today_rank_image(logger: logger, mode: str, favorite_count: int) -> None:
+def download_today_rank_image(logger: Logger, mode: str, favorite_count: int) -> None:
     pixiv_list = rank_today_list(logger, mode=mode, max_page=2)
     pids = [pixiv.illust_id for pixiv in pixiv_list]
 
@@ -95,16 +100,16 @@ def download_today_rank_image(logger: logger, mode: str, favorite_count: int) ->
 
         # 过滤掉多页的图片
         if info.pageCount > 1:
-            logger.info(f"📖 Image {pid} has {info.pageCount} pages, skipping.")
+            logger.info(f"📖 {pid} has {info.pageCount} pages, skip!")
             continue
 
         if info.bookmarkCount < favorite_count:
-            logger.info(f"💔 Image {pid} has count {info.bookmarkCount}, skipping.")
+            logger.info(f"💔 {pid}' favorite count: {info.bookmarkCount}, skip!")
             continue
 
         url = info.urls.get_url()
         if len(url) == 0:
-            logger.warning(f"⚠️  Image {pid} has no valid URL, skipping.")
+            logger.warning(f"⚠️ {pid} has no valid URL, skip!")
             continue
         urls.append(url)
         to_be_downloaded_pids.append(pid)
@@ -127,15 +132,14 @@ def download_today_rank_image(logger: logger, mode: str, favorite_count: int) ->
 
     for pixiv, url in zip(pixiv_list, urls):
         basename = get_url_basename(url)
-        if basename in download_images_global_map.get(str(pixiv.user_id), []):
-            logger.info(f"📂 Exists in global, skip: {basename}")
+        if filter_and_save_image_by_map(
+            logger,
+            str(pixiv.user_id),
+            basename,
+            download_images_global_map,
+            download_images_local_map,
+        ):
             continue
-        if basename in download_images_local_map.get(str(pixiv.user_id), []):
-            logger.info(f"📂 Exists in local, skip: {basename}")
-            continue
-        else:
-            download_images_local_map[str(pixiv.user_id)] = []
-        download_images_local_map[str(pixiv.user_id)].append(basename)
         save_dir = os.path.join(current_directory, "images", f"{pixiv.user_id}")
         save_path = os.path.join(save_dir, f"{basename}")
         all_urls.append(url)
@@ -149,7 +153,7 @@ def download_today_rank_image(logger: logger, mode: str, favorite_count: int) ->
     )
 
 
-def merge_all_json_files(logger: logger) -> None:
+def merge_all_json_files(logger: Logger) -> None:
     current_directory = os.path.dirname(__file__)
     json_files = glob(os.path.join(current_directory, "rank*.json"))
     output_filepath = os.path.join(current_directory, "rank.json")
@@ -177,9 +181,9 @@ def merge_all_json_files(logger: logger) -> None:
 
 
 if __name__ == "__main__":
-    modes = ["daily", "weekly", "monthly", "rookie"]
-    logger = get_loguru_logger()
-    favorite_count = 500  # 仅下载红心数超过1k的图片
+    modes = ["daily", "weekly", "monthly", "rookie", "original", "daily_ai"]
+    logger = get_logger()
+    favorite_count = 1000  # 仅下载红心数超过1k的图片
     with ThreadPoolExecutor(max_workers=len(modes)) as executor:
         futures = [
             executor.submit(download_today_rank_image, logger, mode, favorite_count)

@@ -6,11 +6,11 @@ import json
 import os
 import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from logging import Logger
 from typing import Dict, List
 from urllib.parse import urlparse
 
 import requests
-from loguru import logger
 
 # 添加项目根目录到 sys.path
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
@@ -30,7 +30,7 @@ class PixivImage:
     PixivImage类，用于获取Pixiv图片的URL信息
     """
 
-    def __init__(self, logger: logger, pid: int):
+    def __init__(self, logger: Logger, pid: int):
         self.logger = logger
         self.pid = pid
 
@@ -109,7 +109,7 @@ class PixivImage:
 
 
 def batch_get_image_infos(
-    logger: logger, pids: List[int], max_workers: int = 10
+    logger: Logger, pids: List[int], max_workers: int = 10
 ) -> Dict[int, PixivItemUrlInfo]:
     """
     批量获取图片的url信息，包括：链接，点赞数，评论数，收藏数
@@ -137,7 +137,7 @@ def batch_get_image_infos(
 
 
 def batch_get_image_urls(
-    logger: logger, pids: List[int], max_workers: int = 10
+    logger: Logger, pids: List[int], max_workers: int = 10
 ) -> Dict[int, List[str]]:
     """
     批量获取图片的 URL
@@ -165,7 +165,7 @@ def batch_get_image_urls(
     return result
 
 
-def download_image_stream(logger: logger, url: str, save_path: str) -> None:
+def download_image_stream(logger: Logger, url: str, save_path: str) -> None:
     """
     下载图片
     :param logger: 日志记录器
@@ -176,8 +176,6 @@ def download_image_stream(logger: logger, url: str, save_path: str) -> None:
         "referer": "https://www.pixiv.net/",
         "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
     }
-
-    logger.info(f"🔄 开始下载: {url}, 保存位置: {save_path}")
     for attempt in range(1, MAX_RETRIES + 1):
         try:
             response = requests.get(url, headers=headers, stream=True)
@@ -198,7 +196,7 @@ def download_image_stream(logger: logger, url: str, save_path: str) -> None:
 
 
 def batch_download_images(
-    logger: logger, urls: List[str], save_paths: List[str], max_workers: int = 10
+    logger: Logger, urls: List[str], save_paths: List[str], max_workers: int = 10
 ) -> None:
     """
     批量下载图片
@@ -220,3 +218,32 @@ def get_url_basename(url: str) -> str:
     parsed_url = urlparse(url)
     basename = os.path.basename(parsed_url.path)
     return basename
+
+
+def filter_and_save_image_by_map(
+    logger: Logger,
+    user_id: str,
+    basename: str,
+    global_map: Dict[str, List[str]],
+    local_map: Dict[str, List[str]],
+) -> bool:
+    """
+    检查图片是否已经存在于全局或本地映射中
+    :param logger: 日志记录器
+    :param user_id: 用户 ID
+    :param basename: 图片文件名
+    :param global_map: 全局映射
+    :param local_map: 本地映射
+    :return: 如果图片已经存在于全局或本地映射中，则返回 True，否则返回 False
+    """
+    if basename in global_map.get(user_id, []):
+        logger.info(f"📂 Exists in global, skip: {basename}")
+        return True
+    if basename in local_map.get(user_id, []):
+        logger.info(f"📂 Exists in local, skip: {basename}")
+        return True
+    else:
+        local_map[user_id] = []
+    local_map[user_id].append(basename)
+
+    return False

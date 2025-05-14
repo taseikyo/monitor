@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 from logging import Logger
 from logging.handlers import TimedRotatingFileHandler
 
+import colorlog
+
 
 def is_beijing_time() -> bool:
     """
@@ -156,10 +158,21 @@ def get_logger(
             "%(asctime)s - %(filename)s:%(lineno)d - %(levelname)s: %(message)s"
         )
 
+        colorlog_formatter = colorlog.ColoredFormatter(
+            "%(log_color)s%(asctime)s-%(filename)s:%(lineno)d-%(levelname)s%(reset)s: %(message)s",  # noqa: E501
+            log_colors={
+                "DEBUG": "cyan",
+                "INFO": "green",
+                "WARNING": "yellow",
+                "ERROR": "red",
+                "CRITICAL": "bold_red",
+            },
+        )
+
         # 控制台 handler
         console_handler = logging.StreamHandler()
         console_handler.setLevel(logging.INFO)
-        console_handler.setFormatter(formatter)
+        console_handler.setFormatter(colorlog_formatter)
         logger.addHandler(console_handler)
 
         # 文件 handler

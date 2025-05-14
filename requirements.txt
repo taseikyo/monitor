@@ -8,3 +8,4 @@ pydantic
 requests
 aiohttp
 loguru
+colorlog
