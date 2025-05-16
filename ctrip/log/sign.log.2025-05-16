@@ -1,0 +1,4 @@
+2025-05-15 00:47:47,507 - sign.py:35 - INFO: Request URL: https://m.ctrip.com/restapi/soa2/22769/signToday
+2025-05-15 00:47:47,508 - sign.py:36 - INFO: Response Text: {"ResponseStatus":{"Timestamp":"/Date(1747270067387+0800)/","Ack":"Success","Errors":[],"Extension":[{"Id":"CLOGGING_TRACE_ID","Value":"1951243912171968355"},{"Id":"RootMessageId","Value":"100025527-0a396741-485352-1527766"}]},"code":0,"message":"SUCCESS","continueDay":2,"baseIntegratedPoint":4,"extraIntegratedPoint":0,"extraCtripPoint":0,"tomorrowIntegratedPoint":6,"extraDay":0,"type":0,"lotteryTimes":0,"singVersion":1,"lottery":0}
+2025-05-15 00:47:47,508 - sign.py:61 - INFO: 签到成功，今日获得积分：4，连续签到天数：2
+2025-05-15 00:47:47,509 - csver.py:61 - INFO: 写入成功：[1747238400, 4]
