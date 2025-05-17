@@ -48,13 +48,11 @@ def get_bean(logger: Logger, cookie: str = "") -> int:
     try:
         response = session.post(url, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
-        logger.info(f"Response Text: {response.text.replace('\n', '')}")
+        resp = response.json()
     except requests.RequestException as e:
+        logger.info(f"Response Text: {response.text.replace('\n', '')}")
         logger.error(f"Request failed: {e}")
         return -1
-
-    try:
-        resp = response.json()
     except json.JSONDecodeError as e:
         logger.error(f"JSON decode failed: {e}")
         return -1

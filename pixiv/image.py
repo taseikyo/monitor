@@ -47,9 +47,9 @@ class PixivImage:
         try:
             response = requests.get(url, headers=headers, timeout=10)
             self.logger.info(f"Request URL: {response.url}")
-            self.logger.info(f"Response Text: {response.text.replace('\n', '')}")
             resp = response.json()
         except requests.RequestException as e:
+            self.logger.info(f"Response Text: {response.text.replace('\n', '')}")
             self.logger.error(f"Request failed: {e}")
             return []
         except json.JSONDecodeError as e:
@@ -88,9 +88,9 @@ class PixivImage:
         try:
             response = requests.get(url, headers=headers, timeout=10)
             self.logger.info(f"🔎 Request URL: {response.url}")
-            self.logger.info(f"📄 Response Text: {response.text}")
             resp = response.json()
         except requests.RequestException as e:
+            self.logger.info(f"📄 Response Text: {response.text}")
             self.logger.error(f"❌ Request failed: {e}")
             return None
         except json.JSONDecodeError as e:

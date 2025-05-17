@@ -45,13 +45,11 @@ def get_user_top_items(logger: Logger, user_id: str) -> Dict[int, PixivUserTopIt
     try:
         response = session.get(base_url, params=payload, headers=headers, timeout=10)
         logger.info(f"🌐 Request URL: {response.url}")
-        logger.info(f"📄 Response Text: {response.text}")
+        resp = response.json()
     except requests.RequestException as e:
+        logger.info(f"📄 Response Text: {response.text}")
         logger.error(f"❌ Request failed: {e}")
         return result
-
-    try:
-        resp = response.json()
     except json.JSONDecodeError as e:
         logger.error(f"❌ JSON decode failed: {e}")
         return result
