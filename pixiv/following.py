@@ -87,7 +87,7 @@ def get_user_following(
     return result
 
 
-if __name__ == "__main__":
+def main():
     logger = get_logger()
     user_id = os.getenv("PIXIV_UID", "")
     cookie = os.getenv("PIXIV_COOKIE", "")
@@ -95,6 +95,9 @@ if __name__ == "__main__":
 
     user_ids = [uf.userId for uf in ufs]
     logger.info(f"✅ Found {len(user_ids)} following users.")
+    if len(user_ids) == 0:
+        logger.error("❌ No following users found.")
+        return
 
     current_directory = os.path.dirname(__file__)
     download_images_map_global_filepath = f"{current_directory}/rank.json"
@@ -126,3 +129,7 @@ if __name__ == "__main__":
     with open(download_images_map_global_filepath, "w") as f:
         json.dump(download_images_global_map, f, ensure_ascii=False, indent=0)
     logger.info(f"✅ Finished. Updated {download_images_map_global_filepath}")
+
+
+if __name__ == "__main__":
+    main()
