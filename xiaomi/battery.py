@@ -43,15 +43,13 @@ def battery_info() -> Dict[str, str]:
     try:
         response = session.get(url, params=payload, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
+        resp = response.json()
+    except requests.RequestException as e:
         logger.info(
             f"Response Text: {response.text.replace('\n', '').replace('  ', '')}"
         )
-    except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
         return {}
-
-    try:
-        resp = response.json()
     except json.JSONDecodeError as e:
         logger.error(f"JSON decode failed: {e}")
         return {}

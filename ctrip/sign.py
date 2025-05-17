@@ -33,15 +33,13 @@ def sign(logger: Logger, cookie: str = "") -> int:
     try:
         response = session.get(url, headers=headers, timeout=10)
         logger.info(f"Request URL: {response.url}")
+        resp = response.json()
+    except requests.RequestException as e:
         logger.info(
             f"Response Text: {response.text.replace(' ', '').replace('\n', '')}"
         )
-    except requests.RequestException as e:
         logger.error(f"Request failed: {e}")
         return -1
-
-    try:
-        resp = response.json()
     except json.JSONDecodeError as e:
         logger.error(f"JSON decode failed: {e}")
         return -1

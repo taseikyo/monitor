@@ -45,24 +45,22 @@ def get_user_top_items(logger: Logger, user_id: str) -> Dict[int, PixivUserTopIt
     try:
         response = session.get(base_url, params=payload, headers=headers, timeout=10)
         logger.info(f"🌐 Request URL: {response.url}")
-        logger.info(f"📄 Response Text: {response.text}")
+        resp = response.json()
     except requests.RequestException as e:
+        logger.info(f"📄 Response Text: {response.text}")
         logger.error(f"❌ Request failed: {e}")
         return result
-
-    try:
-        resp = response.json()
     except json.JSONDecodeError as e:
         logger.error(f"❌ JSON decode failed: {e}")
         return result
 
     if not resp:
-        logger.warning("⚠️  Empty response.")
+        logger.warning("⚠️ Empty response.")
         return result
 
     illusts = resp.get("body", {}).get("illusts", {})
     if not illusts:
-        logger.warning("⚠️  No illustrations found.")
+        logger.warning("⚠️ No illustrations found.")
         return result
 
     for pid, illust in illusts.items():
@@ -95,11 +93,11 @@ def download_user_top_images(
 
         # 过滤掉多页的图片
         if info.pageCount > 1:
-            logger.info(f"📖 {pid} has {info.pageCount} pages, skip!")
+            logger.warning(f"📖 {pid} has {info.pageCount} pages, skip!")
             continue
 
         if info.bookmarkCount < favorite_count:
-            logger.info(f"💔 {pid}' favorite count: {info.bookmarkCount}, skip!")
+            logger.warning(f"💔 {pid}' favorite count: {info.bookmarkCount}, skip!")
             continue
 
         url = info.urls.get_url()

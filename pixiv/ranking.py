@@ -59,12 +59,10 @@ def rank_today_list(
             )
             logger.info(f"Request URL: {response.url}")
             logger.info(f"Response Text: {response.text}")
+            resp = response.json()
         except requests.RequestException as e:
             logger.error(f"Request failed: {e}")
             return []
-
-        try:
-            resp = response.json()
         except json.JSONDecodeError as e:
             logger.error(f"JSON decode failed: {e}")
             return []
@@ -74,14 +72,14 @@ def rank_today_list(
             return []
 
         pixivResponse = PixivResponse.model_validate(resp)
-        for content in pixivResponse.contents:
-            if content.illust_page_count > 1:
+        for item in pixivResponse.contents:
+            if item.illust_page_count > 1:
                 logger.warning(
-                    f"id: {content.illust_id} count {content.illust_page_count} skip!"
+                    f"📖 {item.illust_id} has {item.illust_page_count} pages, skip!"
                 )
                 continue
 
-            pixiv_list.append(content)
+            pixiv_list.append(item)
 
     return pixiv_list
 
@@ -95,7 +93,7 @@ def download_today_rank_image(logger: Logger, mode: str, favorite_count: int) ->
     urls = []
     for pid, info in infoMap.items():
         if not info:
-            logger.warning(f"⚠️  Failed to get image info for pid {pid}")
+            logger.warning(f"⚠️ Failed to get image info for pid {pid}")
             continue
 
         # 过滤掉多页的图片
