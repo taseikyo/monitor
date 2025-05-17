@@ -30,6 +30,14 @@ from utils.logger import get_logger  # noqa: E402
 def get_user_following(
     logger: Logger, user_id: str, cookie: str, max_page: int = 10
 ) -> List[PixivFollowingUserInfo]:
+    """
+    获取用户的关注列表
+    :param logger: 日志记录器
+    :param user_id: 用户ID
+    :param cookie: 用户cookie
+    :param max_page: 最大页数
+    :return: PixivFollowingUserInfo列表
+    """
     if len(user_id) == 0 or len(cookie) == 0:
         logger.error("❌ Invalid user ID or empty cookie.")
         return []
@@ -54,12 +62,13 @@ def get_user_following(
     for i in range(max_page):
         payload["offset"] = count * i
         payload["limit"] = count
-        logger.info(f"🌐 Page {i+1} with offset {payload['offset']}...")
         try:
             response = session.get(
                 base_url, params=payload, headers=headers, timeout=10
             )
-            logger.info(f"🌐 Request URL: {response.url}")
+            logger.info(
+                f"🌐 Request URL: {response.url}, page: {i+1}, offset: {count * i}"
+            )
             resp = response.json()
         except requests.RequestException as e:
             logger.info(f"📄 Response Text: {response.text}")

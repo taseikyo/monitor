@@ -100,3 +100,20 @@ class PixivFollowingInfo(BaseModel):
 
     class Config:
         extra = "ignore"
+
+
+class PixivTagItemInfo(BaseModel):
+    userId: str
+    UserName: str
+
+    id: str
+    title: str
+
+    class Config:
+        extra = "ignore"
+
+
+class PixivTagItemRespInfo(BaseModel):
+    data: List[PixivTagItemInfo]
+    lastPage: int
+    total: int
