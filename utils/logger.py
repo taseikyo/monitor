@@ -75,13 +75,14 @@ class SmartCompressAndCleanupTimedRotatingFileHandler(TimedRotatingFileHandler):
                     file_date = self.parse_date_from_filename(fileName)
                     if file_date and (today - file_date).days > self.compressBeforeDays:
                         gz_filepath = fullPath + ".gz"
+                        self._log_internal(f"Compressing log: {fileName}")
                         if not os.path.exists(gz_filepath):
                             with open(fullPath, "rb") as f_in, gzip.open(
                                 gz_filepath, "wb"
                             ) as f_out:
                                 shutil.copyfileobj(f_in, f_out)
                             os.remove(fullPath)
-                            self._log_internal(f"Compressed: {fileName}")
+                            self._log_internal(f"Compressed: {gz_filepath}")
 
     def cleanup_very_old_logs(self):
         dirName, baseName = os.path.split(self.baseFilename)
@@ -97,19 +98,14 @@ class SmartCompressAndCleanupTimedRotatingFileHandler(TimedRotatingFileHandler):
                     self._log_internal(f"Deleted old log: {fileName}")
 
     def _log_internal(self, message):
-        try:
-            record = logging.LogRecord(
-                name="log.internal",
-                level=logging.INFO,
-                pathname=__file__,
-                lineno=0,
-                msg=message,
-                args=(),
-                exc_info=None,
-            )
-            self.emit(record)
-        except Exception:
-            pass
+        logger = logging.getLogger("log.maintenance")
+
+        if not logger.hasHandlers():
+            logger.setLevel(logging.INFO)
+            for handler in logging.getLogger().handlers:
+                logger.addHandler(handler)
+
+        logger.info(message)
 
 
 def get_logger(
@@ -187,5 +183,11 @@ def get_logger(
         file_handler.setFormatter(formatter)
         file_handler.suffix = "%Y-%m-%d"  # 文件名日期后缀
         logger.addHandler(file_handler)
+
+        # 日志归档/清理日志使用同一个 handler
+        maintenance_logger = logging.getLogger("log.maintenance")
+        if not maintenance_logger.hasHandlers():
+            maintenance_logger.setLevel(logging.INFO)
+            maintenance_logger.addHandler(file_handler)
 
     return logger

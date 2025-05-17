@@ -61,7 +61,7 @@ jobs:
 
           # 输出当前目录
           pwd
-          ls -Rt
+          ls -Rt "temp-images/$DATE"
 
           # 配置 Git
           git config --global init.defaultBranch master

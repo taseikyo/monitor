@@ -84,3 +84,19 @@ class PixivItemUrlInfo(BaseModel):
 
     class Config:
         extra = "ignore"
+
+
+class PixivFollowingUserInfo(BaseModel):
+    userId: str
+    userName: str
+
+    class Config:
+        extra = "ignore"
+
+
+class PixivFollowingInfo(BaseModel):
+    total: int
+    users: List[PixivFollowingUserInfo]
+
+    class Config:
+        extra = "ignore"
