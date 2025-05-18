@@ -1,5 +1,4 @@
-2025-05-17 00:47:43,328 - bean.py:50 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
-2025-05-17 00:47:43,329 - bean.py:51 - INFO: Response Text: {"code":"0","data":{"signedRan":"B","status":"1","beanUserType":1,"awardType":"1","dailyAward":{"type":"1","title":"签到成功，","subTitle":"恭喜您获得","beanAward":{"beanCount":"1","beanImgUrl":"https://m.360buyimg.com/njmobilecms/jfs/t23452/19/1797778090/8622/14e40996/5b69974eN9880f531.png"}},"continuousDays":"27","tomorrowSendBeans":0}}
-2025-05-17 00:47:43,329 - bean.py:100 - INFO: ✅ 今日获得京豆数量：1
-2025-05-17 00:47:43,330 - csver.py:61 - INFO: 写入成功：[1747411200, 1]
-2025-05-17 00:47:43,331 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1746806400）
+2025-05-18 00:53:42,753 - bean.py:50 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-05-18 00:53:42,753 - bean.py:98 - INFO: ✅ 今日获得京豆数量：45
+2025-05-18 00:53:42,754 - csver.py:61 - INFO: 写入成功：[1747497600, 45]
+2025-05-18 00:53:42,754 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1746892800）
