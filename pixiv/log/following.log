@@ -1,3 +1,3 @@
-2025-06-09 00:53:54,257 - following.py:42 - ERROR: ❌ Invalid user ID or empty cookie.
-2025-06-09 00:53:54,258 - following.py:104 - INFO: ✅ Found 0 following users.
-2025-06-09 00:53:54,258 - following.py:106 - ERROR: ❌ No following users found.
+2025-06-10 00:50:52,035 - following.py:42 - ERROR: ❌ Invalid user ID or empty cookie.
+2025-06-10 00:50:52,036 - following.py:104 - INFO: ✅ Found 0 following users.
+2025-06-10 00:50:52,037 - following.py:106 - ERROR: ❌ No following users found.
