@@ -1,4 +1,4 @@
-2025-07-24 00:54:27,768 - bean.py:50 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
-2025-07-24 00:54:27,769 - bean.py:98 - INFO: ✅ 今日获得京豆数量：1
-2025-07-24 00:54:27,769 - csver.py:61 - INFO: 写入成功：[1753286400, 1]
-2025-07-24 00:54:27,769 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1752681600）
+2025-07-25 00:54:11,385 - bean.py:50 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
+2025-07-25 00:54:11,386 - bean.py:98 - INFO: ✅ 今日获得京豆数量：1
+2025-07-25 00:54:11,386 - csver.py:61 - INFO: 写入成功：[1753372800, 1]
+2025-07-25 00:54:11,387 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1752768000）
