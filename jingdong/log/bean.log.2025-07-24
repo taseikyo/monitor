@@ -1,4 +1,0 @@
-2025-07-23 00:54:57,532 - bean.py:50 - INFO: Request URL: https://api.m.jd.com/client.action?functionId=signBeanAct&appid=ld&client=apple
-2025-07-23 00:54:57,532 - bean.py:98 - INFO: ✅ 今日获得京豆数量：2
-2025-07-23 00:54:57,533 - csver.py:61 - INFO: 写入成功：[1753200000, 2]
-2025-07-23 00:54:57,533 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1752595200）
