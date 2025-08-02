@@ -1,3 +1,0 @@
-2025-07-25 00:54:10,541 - sign.py:35 - INFO: Request URL: https://m.ctrip.com/restapi/soa2/22769/signToday
-2025-07-25 00:54:10,541 - sign.py:56 - ERROR: 签到失败，错误代码：404001，错误信息：未登录
-2025-07-25 00:54:10,541 - sign.py:80 - WARNING: ⚠️ 签到失败，未获得积分
