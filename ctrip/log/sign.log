@@ -1,3 +1,4 @@
-2025-08-03 01:00:44,197 - sign.py:35 - INFO: Request URL: https://m.ctrip.com/restapi/soa2/22769/signToday
-2025-08-03 01:00:44,198 - sign.py:56 - ERROR: 签到失败，错误代码：404001，错误信息：未登录
-2025-08-03 01:00:44,198 - sign.py:80 - WARNING: ⚠️ 签到失败，未获得积分
+2025-08-04 00:59:46,781 - sign.py:35 - INFO: Request URL: https://m.ctrip.com/restapi/soa2/22769/signToday
+2025-08-04 00:59:46,782 - sign.py:59 - INFO: 签到成功，今日获得积分：2，连续签到天数：1
+2025-08-04 00:59:46,782 - csver.py:61 - INFO: 写入成功：[1754236800, 2]
+2025-08-04 00:59:46,783 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1753632000）
