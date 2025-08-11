@@ -1,0 +1,3 @@
+2025-08-10 00:58:59,752 - sign.py:35 - INFO: Request URL: https://m.ctrip.com/restapi/soa2/22769/signToday
+2025-08-10 00:58:59,753 - sign.py:59 - INFO: 签到成功，今日获得积分：0，连续签到天数：7
+2025-08-10 00:58:59,753 - csver.py:61 - INFO: 写入成功：[1754755200, 0]
