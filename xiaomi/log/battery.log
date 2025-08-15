@@ -1,4 +1,4 @@
-2025-08-14 00:52:16,625 - battery.py:45 - INFO: Request URL: https://api2.order.mi.com/product/view?version=2&product_id=13396&t=1755132735
-2025-08-14 00:52:16,627 - battery.py:81 - INFO: ✅ 今日 Xiaomi 13 电池换新服务价格：199
-2025-08-14 00:52:16,627 - csver.py:61 - INFO: 写入成功：[1755100800, '199']
-2025-08-14 00:52:16,627 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1754496000）
+2025-08-15 00:52:36,412 - battery.py:45 - INFO: Request URL: https://api2.order.mi.com/product/view?version=2&product_id=13396&t=1755219155
+2025-08-15 00:52:36,415 - battery.py:81 - INFO: ✅ 今日 Xiaomi 13 电池换新服务价格：199
+2025-08-15 00:52:36,416 - csver.py:61 - INFO: 写入成功：[1755187200, '199']
+2025-08-15 00:52:36,416 - csver.py:73 - INFO: 已清理 7 天前的数据（时间戳 < 1754582400）
